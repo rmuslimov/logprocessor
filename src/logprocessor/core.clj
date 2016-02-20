@@ -6,11 +6,11 @@
             [clojure.zip :as zip]
             [criterium.core :refer [bench]]))
 
-(def default-extractions (list 'lcore/get-header-information))
-
-(def
-  PARSING-MAPPING-RULES
-  {:EndTransactionRQ (conj default-extractions 'lcore/get-endtransaction-mode)})
+(defn get-extractors-for-method
+  [method]
+  (case method
+    :EndTransactionRQ '(lcore/get-header-information lcore/get-endtransaction-mode)
+    'lcore/get-header-information))
 
 (defn get-xml-method-name
   [zipper]
@@ -18,10 +18,21 @@
   (let [body (zx/xml1-> zipper :Body)]
     (-> body zip/down zip/node :tag)))
 
-(defn get-endtransaction-mode
+(defn parse-endtransaction-mode
+  "Special parser for EndTransactionRQ."
   [zipper]
   (let [tag (zx/xml1-> zipper :Body :EndTransactionRQ :EndTransaction zip/node)]
     {:end (->> tag :attrs :Ind (= "true"))}))
+
+(defn parse-error-info
+  [zipper]
+  "Parser for error in happened."
+  (let [error
+        (zx/xml1-> zipper :Body zip/down zip/down :Error :SystemSpecificResults)
+        status (zx/xml1-> zipper :Body zip/down :ApplicationResults)]
+    {:message (get-node-text error :Message)
+     :short-text (get-node-text error :ShortText)
+     :status (-> status zip/node :attrs :status)}))
 
 (defn get-node-text
   [node & paths]
@@ -37,10 +48,13 @@
      :timestamp (get-node-text header :MessageData :Timestamp)}))
 
 (defn extract-data
+  "Run all known zipper for certain type of xml structure."
   [zipper]
   (let [method (get-xml-method-name zipper)
-        extractors (#'PARSING-MAPPING-RULES method)]
-    (apply merge
+        extractors (get-extractors-for-method method)]
+    (apply
+     merge
+     {:method-name method}
      (map #((eval %) zipper) extractors))))
 
 (defn process-xml

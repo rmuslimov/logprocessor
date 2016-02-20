@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/"><soap-env:Header><eb:MessageHeader xmlns:eb="http://www.ebxml.org/namespaces/messageHeader" eb:version="1.0" soap-env:mustUnderstand="1"><eb:From><eb:PartyId eb:type="URI">webservices.sabre.com</eb:PartyId></eb:From><eb:To><eb:PartyId eb:type="URI">getgoing.com</eb:PartyId></eb:To><eb:CPAId>0O0G</eb:CPAId><eb:ConversationId>4f7869aa-8940-11e5-9fb8-0eebf1123529</eb:ConversationId><eb:Service eb:type="OTA">EndTransactionLLSRQ</eb:Service><eb:Action>EndTransactionLLSRS</eb:Action><eb:MessageData><eb:MessageId>a02217bd-4326-4831-9287-e5fa0a92a62a@87</eb:MessageId><eb:Timestamp>2015-11-12T17:50:27</eb:Timestamp><eb:RefToMessageId>dbb5be0c-8965-11e5-9fb8-0eebf1123529</eb:RefToMessageId></eb:MessageData></eb:MessageHeader><wsse:Security xmlns:wsse="http://schemas.xmlsoap.org/ws/2002/12/secext"><wsse:BinarySecurityToken valueType="String" EncodingType="wsse:Base64Binary">Shared/IDL:IceSess\/SessMgr:1\.0.IDL/Common/!ICESMS\/RESC!ICESMSLB\/RES.LB!-3470443832646253780!423578!0</wsse:BinarySecurityToken></wsse:Security></soap-env:Header><soap-env:Body><EndTransactionRS xmlns="http://webservices.sabre.com/sabreXML/2011/10" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:stl="http://services.sabre.com/STL/v01" Version="2.0.3">
+ <stl:ApplicationResults status="NotProcessed">
+  <stl:Error type="BusinessLogic" timeStamp="2015-11-12T11:50:27-06:00">
+   <stl:SystemSpecificResults>
+    <stl:Message>PREVIOUS ENTRY IN PROGRESS, PLEASE WAIT</stl:Message>
+    <stl:ShortText>ERR.SWS.HOST.ERROR_IN_RESPONSE</stl:ShortText>
+   </stl:SystemSpecificResults>
+  </stl:Error>
+ </stl:ApplicationResults>
+</EndTransactionRS></soap-env:Body></soap-env:Envelope>
