@@ -21,7 +21,7 @@
 (defn get-endtransaction-mode
   [zipper]
   (let [tag (zx/xml1-> zipper :Body :EndTransactionRQ :EndTransaction zip/node)]
-    (-> tag :attrs :Ind)))
+    {:end (->> tag :attrs :Ind (= "true"))}))
 
 (defn get-node-text
   [node & paths]
@@ -39,7 +39,7 @@
 (defn extract-data
   [zipper]
   (let [method (get-xml-method-name zipper)
-        extractors (get PARSING-MAPPING-RULES method)]
+        extractors (#'PARSING-MAPPING-RULES method)]
     (apply merge
      (map #((eval %) zipper) extractors))))
 
