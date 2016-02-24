@@ -1,36 +1,35 @@
 (ns logprocessor.parsers-test
   (:require [clojure.java.io :as io]
-            [clj-xpath.core :as xp]
+            [clojure.test :refer :all]
             [logprocessor
-             [core-test :as tcore]
-             [parsers :as sut]]
-            [midje.sweet :refer :all]))
+             [core :as core]
+             [parsers :refer :all]]))
+
+(def example-err-xml "test/soap-response-4YQ7mABXSVTnllMUtIHb6b.xml")
 
 (defn get-xml-example
   "Just get xml example"
   [name]
-  (-> tcore/test-error-xml io/resource slurp))
+  (-> example-err-xml io/resource slurp))
 
-(background
- (around
-  :facts
-  (let [err-example (get-xml-example tcore/test-error-xml)
-        et-example (get-xml-example tcore/test-et-xml)]
-    ?form)))
+(deftest check-getting-method-name
+  (is
+   (=
+    (let [example (get-xml-example example-err-xml)]
+      (get-method-name example)) :EndTransactionRS)))
 
-(fact
-  (let [xmldoc (-> err-example xp/xml->doc)]
-    (.parse (sut/map->EndTransaction xmldoc))) => 1)
+(deftest check-iterating-over-locals
+  (is
+   (=
+    (map get-method-name (core/walk-over-local-files))
+    (list :EndTransactionRQ :OTA_PingRQ :EndTransactionRS))))
 
-;; (fact
-;;   (sut/execute-xpath xp/$x:text method-node-err "//Message/text()") =>
-;;   "PREVIOUS ENTRY IN PROGRESS, PLEASE WAIT")
-
-;; (fact
-;;   (sut/parse-end-transaction-mode method-node-et) =>
-;;   {:end true})
-
-;; (fact
-;;   (sut/parse-error-info zipper-err) =>
-;;   {:status "NotProcessed" :message "PREVIOUS ENTRY IN PROGRESS, PLEASE WAIT"
-;;    :short-text "ERR.SWS.HOST.ERROR_IN_RESPONSE"})
+(deftest check-parsing-header-information
+  (is
+   (=
+    (let [example (get-xml-example example-err-xml)]
+      (parse-header-info example))
+    {:session-id "4f7869aa-8940-11e5-9fb8-0eebf1123529",
+     :refto "dbb5be0c-8965-11e5-9fb8-0eebf1123529",
+     :service "EndTransactionLLSRQ",
+     :pcc "0O0G"})))

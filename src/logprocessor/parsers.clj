@@ -1,50 +1,43 @@
 (ns logprocessor.parsers
-  (:require [clj-xpath.core :as xp]
-            [midje.sweet :refer [fact]]))
+  (:require [clj-xpath.core :as xp]))
 
-;; (defn get-node-text
-;;   [node & paths]
-;;   "Executes paths from node and get it's text by calling (:content first)."
-;;   (-> (apply zx/xml1-> node paths) zip/node :content first))
+(defn parse-method-name
+  "Extract node with internal structure"
+  [xmldoc]
+  (xp/$x:tag ".//*[local-name()='Body']/*" xmldoc))
 
-;; (defn parse-error-info
-;;   "Parser for error in happened."
-;;   [zipper]
-;;   (let [error
-;;         (zx/xml1-> zipper :Body zip/down zip/down :Error :SystemSpecificResults)
-;;         status (zx/xml1-> zipper :Body zip/down :ApplicationResults)]
-;;     {:message (get-node-text error :Message)
-;;      :short-text (get-node-text error :ShortText)
-;;      :status (-> status zip/node :attrs :status)}))
+(defn parse-header-info
+  "Get header information"
+  [xmldoc]
+  (let [namespaces (xp/xmlnsmap-from-root-node xmldoc)
+        cnv-xpath ".//MessageHeader//*[local-name()='ConversationId']/text()"
+        pcc-xpath ".//MessageHeader/*[local-name()='CPAId']/text()"
+        service-xpath ".//MessageHeader/*[local-name()='Service']/text()"
+        refto-xpath ".//MessageHeader//*[local-name()='RefToMessageId']/text()"]
+    {:session-id (xp/$x:text cnv-xpath xmldoc)
+     :refto (xp/$x:text refto-xpath xmldoc)
+     :service (xp/$x:text service-xpath xmldoc)
+     :pcc (xp/$x:text pcc-xpath xmldoc)}))
 
-;;; clj-xpath oriented methods
+(defn parse-error-tags
+  "Parse error tags if they exist."
+  [fileobj]
+  nil)
 
-;; (defn get-method-node
-;;   "Extract node with internal structure"
-;;   [fileobj]
-;;   (let [namespaces (xp/xmlnsmap-from-root-node fileobj)]
-;;     (xp/with-namespace-context namespaces
-;;       (xp/$x:node ".//*[local-name()='Body']" fileobj))))
+(defn parse-details
+  "Parse specific node information based on method type"
+  [xmldoc]
+  (let [method-name (parse-method-name xmldoc)]
+    (case method-name
+      :EndTransactionRS {:data 1}
+      :OTA_PingRQ {:data 2}
+      nil)))
 
-;; (defn execute-xpath
-;;   "Execute clj-xpath search with namespace applied."
-;;   [fn node path]
-;;   (xp/with-namespace-context (xp/xmlnsmap-from-node node)
-;;     (fn path node)))
-
-;; (defn parse-end-transaction-mode
-;;   "Special parser for EndTransactionRQ."
-;;   [node]
-;;   (let [attrs (execute-xpath xp/$x:attrs node "./EndTransaction")]
-;;     {:end (->> attrs :Ind (= "true"))}))
-
-;; proto oriented code
-
-(defprotocol SabreXml
-  "Basic Sabre XML representation protocol"
-  (parse [x]))
-
-(deftype EndTransaction [xmldoc]
-  SabreXml
-  (parse [x]
-    (merge {:b 2} {:a 1})))
+(defn process-file
+  "Processing xmldoc return map representing it's structure."
+  [xmldoc]
+  (let [header (parse-header-info xmldoc)
+        errors (parse-error-tags xmldoc)]
+    (if errors
+      (merge header errors)
+      (merge header (or (parse-details xmldoc) {})))))
