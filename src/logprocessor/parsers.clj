@@ -9,15 +9,17 @@
 (defn parse-header-info
   "Get header information"
   [xmldoc]
-  (let [namespaces (xp/xmlnsmap-from-root-node xmldoc)
-        cnv-xpath ".//MessageHeader//*[local-name()='ConversationId']/text()"
-        pcc-xpath ".//MessageHeader/*[local-name()='CPAId']/text()"
-        service-xpath ".//MessageHeader/*[local-name()='Service']/text()"
-        refto-xpath ".//MessageHeader//*[local-name()='RefToMessageId']/text()"]
-    {:session-id (xp/$x:text cnv-xpath xmldoc)
-     :refto (xp/$x:text refto-xpath xmldoc)
-     :service (xp/$x:text service-xpath xmldoc)
-     :pcc (xp/$x:text pcc-xpath xmldoc)}))
+
+  (defn- extract-text
+    [tagname]
+    (xp/$x:text
+     (format ".//MessageHeader//*[local-name()='%s']/text()" tagname)
+     xmldoc))
+
+  {:session-id (extract-text "ConversationId")
+   :refto (extract-text "RefToMessageId")
+   :service (extract-text "Service")
+   :pcc (extract-text "CPAId")})
 
 (defn parse-error-tags
   "Parse error tags if they exist."
