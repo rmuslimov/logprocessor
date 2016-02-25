@@ -6,25 +6,31 @@
   [xmldoc]
   (xp/$x:tag ".//*[local-name()='Body']/*" xmldoc))
 
-(defn parse-header-info
-  "Get header information"
+(defn extract-body-node
+  "Sabre xml has internal xmlns with specific details inside."
   [xmldoc]
+  (xp/$x:node ".//*[local-name()='Body']/*" xmldoc))
 
-  (defn- extract-text
-    [tagname]
-    (xp/$x:text
-     (format ".//MessageHeader//*[local-name()='%s']/text()" tagname)
-     xmldoc))
+(defn- extract-mh-subtext
+  [tagname xmldoc]
+  (xp/$x:text
+   (format ".//MessageHeader//*[local-name()='%s']/text()" tagname) xmldoc))
 
-  {:session-id (extract-text "ConversationId")
-   :refto (extract-text "RefToMessageId")
-   :service (extract-text "Service")
-   :pcc (extract-text "CPAId")})
+(defn parse-header-info
+  "Get header information for sabre files"
+  [xmldoc]
+  {:session-id (extract-mh-subtext "ConversationId" xmldoc)
+   :message-id (extract-mh-subtext "MessageId" xmldoc)
+   :refto (extract-mh-subtext "RefToMessageId" xmldoc)
+   :service (extract-mh-subtext "Action" xmldoc)
+   :timestamp (extract-mh-subtext "Timestamp" xmldoc)
+   :pcc (extract-mh-subtext "CPAId" xmldoc)})
 
-(defn parse-error-tags
+(defn parse-error-info
   "Parse error tags if they exist."
-  [fileobj]
-  nil)
+  [subnode]
+  (xp/with-namespace-context (xp/xmlnsmap-from-node subnode)
+    (xp/$x:text* ".//Message/text()" subnode)))
 
 (defn parse-details
   "Parse specific node information based on method type"
@@ -39,7 +45,8 @@
   "Processing xmldoc return map representing it's structure."
   [xmldoc]
   (let [header (parse-header-info xmldoc)
-        errors (parse-error-tags xmldoc)]
+        subdoc (extract-body-node xmldoc)
+        errors (parse-error-info subdoc)]
     (if errors
-      (merge header errors)
-      (merge header (or (parse-details xmldoc) {})))))
+      (merge header {:errors errors})
+      (merge header (or (parse-details subdoc) {})))))

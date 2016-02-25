@@ -1,35 +1,46 @@
 (ns logprocessor.parsers-test
-  (:require [clojure.java.io :as io]
+  (:require [clj-xpath.core :as xp]
+            [clojure.java.io :as io]
             [clojure.test :refer :all]
             [logprocessor
              [core :as core]
-             [parsers :refer :all]]))
+             [parsers :refer :all]]
+            [midje.sweet :refer :all]))
 
-(def example-err-xml "test/soap-response-4YQ7mABXSVTnllMUtIHb6b.xml")
+(def example-err-xml "test/rsp-error.xml")
 
 (defn get-xml-example
   "Just get xml example"
   [name]
   (-> example-err-xml io/resource slurp))
 
-(deftest check-getting-method-name
-  (is
-   (=
-    (let [example (get-xml-example example-err-xml)]
-      (get-method-name example)) :EndTransactionRS)))
+(facts "Local functions tests"
+  (map parse-method-name (core/walk-over-local-files)) =>
+  (contains [:EndTransactionRS :EndTransactionRQ :OTA_PingRQ] :in-any-order))
 
-(deftest check-iterating-over-locals
-  (is
-   (=
-    (map get-method-name (core/walk-over-local-files))
-    (list :EndTransactionRQ :OTA_PingRQ :EndTransactionRS))))
+(facts "Parsing basic info"
+  ;; header info
+  (-> example-err-xml get-xml-example parse-header-info) =>
+  {:session-id "4f7869aa-8940-11e5-9fb8-0eebf1123529",
+   :refto "dbb5be0c-8965-11e5-9fb8-0eebf1123529",
+   :message-id "a02217bd-4326-4831-9287-e5fa0a92a62a@87",
+   :service "EndTransactionLLSRS",
+   :timestamp "2015-11-12T17:50:27",
+   :pcc "0O0G"}
 
-(deftest check-parsing-header-information
-  (is
-   (=
-    (let [example (get-xml-example example-err-xml)]
-      (parse-header-info example))
-    {:session-id "4f7869aa-8940-11e5-9fb8-0eebf1123529",
-     :refto "dbb5be0c-8965-11e5-9fb8-0eebf1123529",
-     :service "EndTransactionLLSRQ",
-     :pcc "0O0G"})))
+  ;; parse-method-name
+  (-> example-err-xml get-xml-example parse-method-name) => :EndTransactionRS)
+
+(facts "Parsing error info"
+  (xp/xmlnsmap-from-node
+   (extract-body-node (get-xml-example example-err-xml))) =>
+  (contains {"stl" anything})
+
+  (-> example-err-xml get-xml-example extract-body-node parse-error-info) =>
+  '("PREVIOUS ENTRY IN PROGRESS, PLEASE WAIT")
+
+  (inc 1) => 2)
+
+(facts "Resulting xml process functions."
+  (-> example-err-xml get-xml-example process-file) =>
+  (contains {:errors anything}))

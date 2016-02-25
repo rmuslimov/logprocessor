@@ -5,8 +5,8 @@
 
 (defn walk-over-local-files
   "Local test only local files interator"
-  []
-  (let [store (-> "test" io/resource io/file)
+  [store]
+  (let [store (-> store io/resource io/file)
         files (->> store file-seq rest)]
     (map #(-> % slurp xp/xml->doc) files)))
 
