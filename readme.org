@@ -1,22 +1,23 @@
 #+TITLE: BCD Travel S3 log parser
 
-* Starting REPL
+* Short intro
+** Starting REPL
 
 #+begin_src bash
 $ lein repl
 #+end_src
 
-* Reset application state
+** Reset application state
 
 #+begin_src clojure
 (use '(user))
 (user/reset)
 #+end_src
 
-* Run autotest tool
+** Run autotest tool
 
 #+begin_src bash
 $ lein midje :autotest
 #+end_src
 
-* Any problems - text to Rustem
+P.S. Any problems - text to Rustem
