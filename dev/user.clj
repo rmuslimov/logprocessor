@@ -1,15 +1,17 @@
 (ns user
   (:require [clojure.java.io :as io]
-            [midje.sweet :refer [facts]])
+            [clojure.tools.namespace.repl :refer [refresh]]
+            [com.stuartsierra.component :as component]
+            [logprocessor.es :as es])
   (:import java.util.zip.ZipFile))
 
-(def example-zip-file "examples.zip")
+(def app-state (atom {:es nil}))
 
 (defn walk-over-file
   "Iter over files in zip"
   ([filename]
    (let
-       [zipfile (-> example-zip-file io/resource io/file ZipFile.)
+       [zipfile (-> filename io/resource io/file ZipFile.)
         entries
         (remove #(or (.isDirectory %) (-> % .getName (.endsWith "~")))
         (enumeration-seq (.entries zipfile)))]
@@ -22,4 +24,19 @@
       (cons result
             (walk-over-file zipfile (rest entries)))))))
 
-;; (take 3 (walk-over-file example-zip-file))
+(defn start []
+  (swap!
+   app-state
+   update :es
+   (fn [_] (component/start (es/->ES "http://localhost:9200/")))))
+
+
+(defn reset
+  "Reset whole app"
+  []
+  (swap! app-state component/stop)
+  (refresh :after 'user/start))
+
+;; (reset)
+
+;; (map :name (take 3 (walk-over-file "examples.zip")))

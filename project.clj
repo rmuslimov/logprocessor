@@ -8,7 +8,9 @@
                  [org.clojure/data.zip "0.1.1"]
                  [criterium "0.4.4"]
                  [midje "1.8.3"]
-                 [com.github.kyleburton/clj-xpath "1.4.5"]]
+                 [com.github.kyleburton/clj-xpath "1.4.5"]
+                 [com.stuartsierra/component "0.3.1"]
+                 [clojurewerkz/elastisch "2.2.1"]]
   :main ^:skip-aot logprocessor.core
   :target-path "target/%s"
   :profiles {:dev {:source-paths ["dev"]}
