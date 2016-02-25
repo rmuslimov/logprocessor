@@ -13,8 +13,9 @@
 
 (defn- extract-mh-subtext
   [tagname xmldoc]
-  (xp/$x:text
-   (format ".//MessageHeader//*[local-name()='%s']/text()" tagname) xmldoc))
+  (first
+   (xp/$x:text*
+    (format ".//MessageHeader//*[local-name()='%s']/text()" tagname) xmldoc)))
 
 (defn parse-header-info
   "Get header information for sabre files"

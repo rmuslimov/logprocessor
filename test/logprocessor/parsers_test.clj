@@ -1,11 +1,11 @@
 (ns logprocessor.parsers-test
   (:require [clj-xpath.core :as xp]
             [clojure.java.io :as io]
-            [clojure.test :refer :all]
             [logprocessor
              [core :as core]
              [parsers :refer :all]]
-            [midje.sweet :refer :all]))
+            [midje.sweet :refer :all]
+            [user :as dev]))
 
 (def example-err-xml "test/rsp-error.xml")
 
@@ -15,7 +15,7 @@
   (-> example-err-xml io/resource slurp))
 
 (facts "Local functions tests"
-  (map parse-method-name (core/walk-over-local-files)) =>
+  (map parse-method-name (core/walk-over-local-files "test")) =>
   (contains [:EndTransactionRS :EndTransactionRQ :OTA_PingRQ] :in-any-order))
 
 (facts "Parsing basic info"
@@ -44,3 +44,10 @@
 (facts "Resulting xml process functions."
   (-> example-err-xml get-xml-example process-file) =>
   (contains {:errors anything}))
+
+(facts "Processing xml from zip file"
+  (let [calls 10]
+    (count
+     (map
+      #(update-in % [:source] process-file)
+      (take calls (dev/walk-over-file "examples.zip")))) => calls))
