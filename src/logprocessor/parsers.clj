@@ -1,6 +1,12 @@
 (ns logprocessor.parsers
   (:require [clj-xpath.core :as xp]))
 
+(def
+  ^{:doc "Each SOAP may have extension with returns specific information."}
+  details-mapping
+  {:EndTransactionRQ 'parse-et-rq
+   :TravelItineraryReadRQ 'parse-retrieve-rq})
+
 (defn parse-method-name
   "Extract node with internal structure"
   [xmldoc]
@@ -47,22 +53,14 @@
     (let [id (->> subnode (xp/$x:attrs ".//UniqueID[@ID]") :ID)]
       {:id id})))
 
-(defn parse-details
-  "Parse specific node information based on method type"
-  [subdoc method-name]
-  (case method-name
-    :EndTransactionRQ (parse-et-rq subdoc)
-    :TravelItineraryReadRQ (parse-retrieve-rq subdoc)
-    nil))
-
 (defn process-file
   "Processing xmldoc return map representing it's structure."
   [xmldoc]
-  (let [header (parse-header-info xmldoc)
-        method-name (parse-method-name xmldoc)
-        subdoc (extract-body-node xmldoc)
-        errors (parse-error-info subdoc)]
-    (if-not (empty? errors)
-      (merge header {:errors errors})
-      (merge header
-             (or (parse-details subdoc method-name) {})))))
+  (let [subdoc (extract-body-node xmldoc)
+        errors (parse-error-info subdoc)
+        parse-details (details-mapping (parse-method-name xmldoc))]
+    (merge (parse-header-info xmldoc)
+           (if-not (empty? errors)
+             {:errors errors}
+             (if parse-details
+               ((resolve parse-details) subdoc))))))
