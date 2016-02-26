@@ -33,21 +33,36 @@
   (xp/with-namespace-context (xp/xmlnsmap-from-node subnode)
     (xp/$x:text* ".//Message/text()" subnode)))
 
+(defn parse-et-rq
+  "Parse details of EndTransactionRQ"
+  [subnode]
+  (xp/with-namespace-context (xp/xmlnsmap-from-node subnode)
+    (let [ind (->> subnode (xp/$x:attrs ".//EndTransaction[@Ind]") :Ind)]
+      {:Ind (= ind "true")})))
+
+(defn parse-retrieve-rq
+  "Parsing TravelItineraryReadRQ request"
+  [subnode]
+  (xp/with-namespace-context (xp/xmlnsmap-from-node subnode)
+    (let [id (->> subnode (xp/$x:attrs ".//UniqueID[@ID]") :ID)]
+      {:id id})))
+
 (defn parse-details
   "Parse specific node information based on method type"
-  [xmldoc]
-  (let [method-name (parse-method-name xmldoc)]
-    (case method-name
-      :EndTransactionRS {:data 1}
-      :OTA_PingRQ {:data 2}
-      nil)))
+  [subdoc method-name]
+  (case method-name
+    :EndTransactionRQ (parse-et-rq subdoc)
+    :TravelItineraryReadRQ (parse-retrieve-rq subdoc)
+    nil))
 
 (defn process-file
   "Processing xmldoc return map representing it's structure."
   [xmldoc]
   (let [header (parse-header-info xmldoc)
+        method-name (parse-method-name xmldoc)
         subdoc (extract-body-node xmldoc)
         errors (parse-error-info subdoc)]
-    (if errors
+    (if-not (empty? errors)
       (merge header {:errors errors})
-      (merge header (or (parse-details subdoc) {})))))
+      (merge header
+             (or (parse-details subdoc method-name) {})))))

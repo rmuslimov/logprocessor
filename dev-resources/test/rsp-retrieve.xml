@@ -1,0 +1,807 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap-env:Envelope xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/"><soap-env:Header><eb:MessageHeader xmlns:eb="http://www.ebxml.org/namespaces/messageHeader" eb:version="1.0" soap-env:mustUnderstand="1"><eb:From><eb:PartyId eb:type="URI">webservices.sabre.com</eb:PartyId></eb:From><eb:To><eb:PartyId eb:type="URI">getgoing.com</eb:PartyId></eb:To><eb:CPAId>0O0G</eb:CPAId><eb:ConversationId>4f7869aa-8940-11e5-9fb8-0eebf1123529</eb:ConversationId><eb:Service eb:type="OTA">TravelItineraryReadLLSRQ</eb:Service><eb:Action>TravelItineraryReadLLSRS</eb:Action><eb:MessageData><eb:MessageId>5411ef01-5e35-4fe0-a5fd-80e178b8493d@19</eb:MessageId><eb:Timestamp>2015-11-12T17:20:02</eb:Timestamp><eb:RefToMessageId>9b6f7850-8961-11e5-9fb8-0eebf1123529</eb:RefToMessageId></eb:MessageData></eb:MessageHeader><wsse:Security xmlns:wsse="http://schemas.xmlsoap.org/ws/2002/12/secext"><wsse:BinarySecurityToken valueType="String" EncodingType="wsse:Base64Binary">Shared/IDL:IceSess\/SessMgr:1\.0.IDL/Common/!ICESMS\/RESC!ICESMSLB\/RES.LB!-3470443832646253780!423578!0</wsse:BinarySecurityToken></wsse:Security></soap-env:Header><soap-env:Body><TravelItineraryReadRS xmlns="http://webservices.sabre.com/sabreXML/2011/10" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:stl="http://services.sabre.com/STL/v01" Version="2.1.0">
+ <stl:ApplicationResults status="Complete">
+  <stl:Success timeStamp="2015-11-12T11:20:02-06:00"/>
+ </stl:ApplicationResults>
+ <TravelItinerary>
+  <CustomerInfo>
+   <Address>
+    <AddressLine>BCD TRAVEL</AddressLine>
+    <AddressLine>525 WESTPARK DR SUITE 201</AddressLine>
+    <AddressLine>PEACHTREE CITY GA 30269</AddressLine>
+   </Address>
+   <ContactNumbers>
+    <ContactNumber LocationCode="ATL" Phone="866-578-7520-A" RPH="001"/>
+    <ContactNumber LocationCode="ATL" Phone="7703358567-B" RPH="002"/>
+    <ContactNumber LocationCode="ATL" Phone="4042130044-S SUE DUNCAN" RPH="003"/>
+   </ContactNumbers>
+   <CustLoyalty Codeshare="AA" MembershipID="962R0X2" NameNumber="01.01" ProgramID="AA" RPH="001" Status="HK"/>
+   <CustLoyalty Codeshare="DL" MembershipID="2026292264" NameNumber="01.01" ProgramID="DL" RPH="002" Status="HK"/>
+   <CustLoyalty Codeshare="FL" MembershipID="2137282572" NameNumber="01.01" ProgramID="FL" RPH="003" Status="HK"/>
+   <CustLoyalty Codeshare="UA" MembershipID="3189753518" NameNumber="01.01" ProgramID="UA" RPH="004" Status="HK"/>
+   <PaymentInfo>
+    <Payment>
+     <Form RPH="001">*AX379618808322004‡08/17-XN</Form>
+    </Payment>
+   </PaymentInfo>
+   <PersonName Infant="false" NameNumber="01.01" RPH="1">
+    <Email>‡SUE.DUNCAN@INFOR.COM‡</Email>
+    <Email>‡SUE.DUNCAN@INFOR.COM‡</Email>
+    <Email>‡MARK.BOARD@INFOR.COM‡</Email>
+    <GivenName>MARK</GivenName>
+    <Surname>BOARD</Surname>
+   </PersonName>
+  </CustomerInfo>
+  <ItineraryInfo>
+   <ItineraryPricing>
+    <PriceQuote RPH="1">
+     <MiscInformation>
+      <BaggageFees>
+       <Text>BAG ALLOWANCE     -ATLLGA-NIL/DL</Text>
+       <Text>1STCHECKED BAG FEE-ATLLGA-USD25.00/DL/UP TO 50 POUNDS/23 KILOGR</Text>
+       <Text>AMS AND UP TO 62 LINEAR INCHES/158 LINEAR CENTIMETERS</Text>
+       <Text>2NDCHECKED BAG FEE-ATLLGA-USD35.00/DL/UP TO 50 POUNDS/23 KILOGR</Text>
+       <Text>AMS AND UP TO 62 LINEAR INCHES/158 LINEAR CENTIMETERS</Text>
+       <Text>BAG ALLOWANCE     -LGAATL-NIL/DL</Text>
+       <Text>1STCHECKED BAG FEE-LGAATL-USD25.00/DL/UP TO 50 POUNDS/23 KILOGR</Text>
+       <Text>AMS AND UP TO 62 LINEAR INCHES/158 LINEAR CENTIMETERS</Text>
+       <Text>2NDCHECKED BAG FEE-LGAATL-USD35.00/DL/UP TO 50 POUNDS/23 KILOGR</Text>
+       <Text>AMS AND UP TO 62 LINEAR INCHES/158 LINEAR CENTIMETERS</Text>
+       <Text>CARRY ON ALLOWANCE</Text>
+       <Text>ATLLGA LGACVG CVGATL-01P/DL</Text>
+       <Text>01/CARRY ON HAND BAGGAGE</Text>
+       <Text>01/UP TO 45 LINEAR INCHES/115 LINEAR CENTIMETERS</Text>
+       <Text>CARRY ON CHARGES</Text>
+       <Text>ATLLGA LGACVG CVGATL-DL-CARRY ON FEES UNKNOWN-CONTACT CARRIER</Text>
+       <Text>ADDITIONAL ALLOWANCES AND/OR DISCOUNTS MAY APPLY DEPENDING ON</Text>
+       <Text>FLYER-SPECIFIC FACTORS /E.G. FREQUENT FLYER STATUS/MILITARY/</Text>
+       <Text>CREDIT CARD FORM OF PAYMENT/EARLY PURCHASE OVER INTERNET,ETC./</Text>
+       <Text>EMBARGOES-APPLY TO EACH PASSENGER</Text>
+       <Text>ATLLGA LGACVG CVGATL-DL</Text>
+       <Text>SPORTING EQUIPMENT/CANOE/KAYAK NOT PERMITTED</Text>
+      </BaggageFees>
+      <SignatureLine CommissionAmount="0.00" CommissionID="A" Source="SYS" Status="EXPIRED">
+       <Text>0O0G 0O0G*ABV 1215/12NOV15</Text>
+      </SignatureLine>
+     </MiscInformation>
+     <PricedItinerary DisplayOnly="false" InputMessage="WPADL‡IINF50‡ETR‡K0.00‡RQ" RPH="1" StatusCode="A" TaxExempt="false" ValidatingCarrier="DL">
+      <AirItineraryPricingInfo>
+       <ItinTotalFare>
+        <BaseFare Amount="1144.26" CurrencyCode="USD"/>
+        <Taxes>
+         <Tax Amount="122.52" TaxCode="XT"/>
+         <TaxBreakdownCode>85.82US</TaxBreakdownCode>
+         <TaxBreakdownCode>12.00ZP</TaxBreakdownCode>
+         <TaxBreakdownCode>11.20AY</TaxBreakdownCode>
+         <TaxBreakdownCode>13.50XF</TaxBreakdownCode>
+        </Taxes>
+        <TotalFare Amount="1266.78" CurrencyCode="USD"/>
+        <Totals>
+         <BaseFare Amount="1144.26"/>
+         <Taxes>
+          <Tax Amount="122.52"/>
+         </Taxes>
+         <TotalFare Amount="1266.78"/>
+        </Totals>
+       </ItinTotalFare>
+       <PassengerTypeQuantity Code="ADT" Quantity="01"/>
+       <PrivateFareInformation>
+        <Text>CORPID  *</Text>
+       </PrivateFareInformation>
+       <PTC_FareBreakdown>
+        <Endorsements>
+         <Text>NONREF/PENALTY APPLIES</Text>
+        </Endorsements>
+        <FareBasis Code="KA0UX0MA/XX9A7/KR3WA0MQ/XX9A7/SA0QA0MA/XX9A7"/>
+        <FareCalculation>
+         <Text>ATL DL NYC277.49DL CVG464.84DL ATL401.93USD1144.26END ZPATLLGACVG XFATL4.5LGA4.5CVG4.5</Text>
+        </FareCalculation>
+        <FareSource>ATPC</FareSource>
+        <FlightSegment ConnectionInd="O" DepartureDateTime="11-16T11:45" FlightNumber="1386" ResBookDesigCode="K" SegmentNumber="1" Status="OK">
+         <BaggageAllowance Number="NIL"/>
+         <FareBasis Code="KA0UX0MA/XX9A7"/>
+         <MarketingAirline Code="DL" FlightNumber="1386"/>
+         <OriginLocation LocationCode="ATL"/>
+         <ValidityDates>
+          <NotValidAfter>11-16</NotValidAfter>
+          <NotValidBefore>11-16</NotValidBefore>
+         </ValidityDates>
+        </FlightSegment>
+        <FlightSegment ConnectionInd="O" DepartureDateTime="11-18T10:30" FlightNumber="6233" ResBookDesigCode="K" SegmentNumber="2" Status="OK">
+         <BaggageAllowance Number="NIL"/>
+         <FareBasis Code="KR3WA0MQ/XX9A7"/>
+         <MarketingAirline Code="DL" FlightNumber="6233"/>
+         <OriginLocation LocationCode="LGA"/>
+         <ValidityDates>
+          <NotValidAfter>11-18</NotValidAfter>
+          <NotValidBefore>11-18</NotValidBefore>
+         </ValidityDates>
+        </FlightSegment>
+        <FlightSegment ConnectionInd="O" DepartureDateTime="11-18T18:23" FlightNumber="2106" ResBookDesigCode="S" SegmentNumber="3" Status="OK">
+         <BaggageAllowance Number="NIL"/>
+         <FareBasis Code="SA0QA0MA/XX9A7"/>
+         <MarketingAirline Code="DL" FlightNumber="2106"/>
+         <OriginLocation LocationCode="CVG"/>
+         <ValidityDates>
+          <NotValidAfter>11-18</NotValidAfter>
+          <NotValidBefore>11-18</NotValidBefore>
+         </ValidityDates>
+        </FlightSegment>
+        <FlightSegment>
+         <OriginLocation LocationCode="ATL"/>
+        </FlightSegment>
+        <ResTicketingRestrictions>LAST DAY TO PURCHASE 13NOV/2359</ResTicketingRestrictions>
+        <ResTicketingRestrictions>GUARANTEED FARE APPL IF PURCHASED BEFORE 13NOV</ResTicketingRestrictions>
+        <TourCode>
+         <Text>XX9A7</Text>
+        </TourCode>
+       </PTC_FareBreakdown>
+      </AirItineraryPricingInfo>
+     </PricedItinerary>
+     <ResponseHeader>
+      <Text>FARE - PRICE RETAINED</Text>
+      <Text>FARE USED TO CALCULATE DISCOUNT</Text>
+      <Text>FARE SUBJECT TO CHANGE</Text>
+     </ResponseHeader>
+    </PriceQuote>
+   </ItineraryPricing>
+   <ReservationItems>
+    <Item RPH="1">
+     <FlightSegment AirMilesFlown="0756" ArrivalDateTime="11-16T14:00" DayOfWeekInd="1" DepartureDateTime="2015-11-16T11:45" ElapsedTime="02.15" FlightNumber="1386" NumberInParty="01" ResBookDesigCode="K" SegmentNumber="0001" SmokingAllowed="false" SpecialMeal="false" Status="HK" StopQuantity="00" eTicket="true">
+      <DestinationLocation LocationCode="LGA" Terminal="TERMINAL D" TerminalCode="D"/>
+      <Equipment AirEquipType="M88"/>
+      <MarketingAirline Code="DL" FlightNumber="1386"/>
+      <OriginLocation LocationCode="ATL" Terminal="SOUTH TERMINAL" TerminalCode="S"/>
+      <SupplierRef ID="DCDL*F6EX3K"/>
+      <UpdatedArrivalTime>11-16T14:00</UpdatedArrivalTime>
+      <UpdatedDepartureTime>11-16T11:45</UpdatedDepartureTime>
+     </FlightSegment>
+    </Item>
+    <Item RPH="2">
+     <FlightSegment AirMilesFlown="0580" ArrivalDateTime="11-18T13:00" ConnectionInd="O" DayOfWeekInd="3" DepartureDateTime="2015-11-18T10:30" ElapsedTime="02.30" FlightNumber="6233" NumberInParty="01" ResBookDesigCode="K" SegmentNumber="0002" SmokingAllowed="false" SpecialMeal="false" Status="HK" StopQuantity="00" eTicket="true">
+      <DestinationLocation LocationCode="CVG" Terminal="TERMINAL 3" TerminalCode="3"/>
+      <Equipment AirEquipType="CR7"/>
+      <MarketingAirline Code="DL" FlightNumber="6233"/>
+      <OperatingAirline CompanyShortName="GOJET AIRLINES DBA DELTA CONNECTION"/>
+      <OperatingAirline CompanyShortName="GOJET AIRLINES DBA DELTA CONNECTION"/>
+      <OriginLocation LocationCode="LGA" Terminal="TERMINAL D" TerminalCode="D"/>
+      <SupplierRef ID="DCDL*F6EX3K"/>
+      <Text>OPERATED BY GOJET AIRLINES DBA DELTA CONNECTION</Text>
+      <UpdatedArrivalTime>11-18T13:00</UpdatedArrivalTime>
+      <UpdatedDepartureTime>11-18T10:30</UpdatedDepartureTime>
+     </FlightSegment>
+    </Item>
+    <Item RPH="3">
+     <FlightSegment AirMilesFlown="0375" ArrivalDateTime="11-18T20:05" ConnectionInd="I" DayOfWeekInd="3" DepartureDateTime="2015-11-18T18:23" ElapsedTime="01.42" FlightNumber="2106" NumberInParty="01" ResBookDesigCode="S" SegmentNumber="0003" SmokingAllowed="false" SpecialMeal="false" Status="HK" StopQuantity="00" eTicket="true">
+      <DestinationLocation LocationCode="ATL" Terminal="SOUTH TERMINAL" TerminalCode="S"/>
+      <Equipment AirEquipType="M88"/>
+      <MarketingAirline Code="DL" FlightNumber="2106"/>
+      <OriginLocation LocationCode="CVG" Terminal="TERMINAL 3" TerminalCode="3"/>
+      <SupplierRef ID="DCDL*F6EX3K"/>
+      <UpdatedArrivalTime>11-18T20:05</UpdatedArrivalTime>
+      <UpdatedDepartureTime>11-18T18:23</UpdatedDepartureTime>
+     </FlightSegment>
+    </Item>
+    <Item RPH="4">
+     <Seats>
+      <Seat Changed="N" NameNumber="01.01" Number="29C" SegmentNumber="0001" SegmentStatus="KK" SmokingPreference="N" Status="HRS" TypeTwo="M">
+       <FlightSegment>
+        <DestinationLocation LocationCode="LGA"/>
+        <OriginLocation LocationCode="ATL"/>
+       </FlightSegment>
+      </Seat>
+      <Seat Changed="N" NameNumber="01.01" Number="12B" SegmentNumber="0002" SegmentStatus="KK" SmokingPreference="N" Status="HRS" TypeTwo="M">
+       <FlightSegment>
+        <DestinationLocation LocationCode="CVG"/>
+        <OriginLocation LocationCode="LGA"/>
+       </FlightSegment>
+      </Seat>
+     </Seats>
+    </Item>
+   </ReservationItems>
+   <Ticketing RPH="001" TicketTimeLimit="TAW0O0G12NOV009//0O0G/ET"/>
+  </ItineraryInfo>
+  <ItineraryRef AirExtras="false" CustomerIdentifier="6791000101" ID="NQASFE" InhibitCode="U" PartitionID="AA" PrimeHostID="1S">
+   <Source AAA_PseudoCityCode="0O0G" CreateDateTime="2015-11-12T11:16" CreationAgent="ABV" HomePseudoCityCode="0O0G" PseudoCityCode="0O0G" ReceivedFrom="SUE/BRENDA/404-213-0044"/>
+  </ItineraryRef>
+  <RemarkInfo>
+   <Remark Code="X" RPH="002" Type="Alpha-Coded">
+    <Text>TID-5368-3227000-5213</Text>
+   </Remark>
+   <Remark RPH="002" Type="General">
+    <Text>X‡TID-5368-3227000-5213</Text>
+   </Remark>
+   <Remark Code="B" RPH="003" Type="Alpha-Coded">
+    <Text>SQL-1793</Text>
+   </Remark>
+   <Remark RPH="003" Type="General">
+    <Text>B‡SQL-1793</Text>
+   </Remark>
+   <Remark Code="B" RPH="004" Type="Alpha-Coded">
+    <Text>SCRIPT ACCT-INFOR PCC-0O0G  **DO NOT DELETE**</Text>
+   </Remark>
+   <Remark RPH="004" Type="General">
+    <Text>B‡SCRIPT ACCT-INFOR PCC-0O0G  **DO NOT DELETE**</Text>
+   </Remark>
+   <Remark Code="C" RPH="005" Type="Alpha-Coded">
+    <Text>CORP PREF ICAR</Text>
+   </Remark>
+   <Remark RPH="005" Type="General">
+    <Text>C‡CORP PREF ICAR</Text>
+   </Remark>
+   <Remark Code="C" RPH="006" Type="Alpha-Coded">
+    <Text>ZL/CD-XZ03H07 ET/CD-XZ03H07</Text>
+   </Remark>
+   <Remark RPH="006" Type="General">
+    <Text>C‡ZL/CD-XZ03H07 ET/CD-XZ03H07</Text>
+   </Remark>
+   <Remark Code="C" RPH="007" Type="Alpha-Coded">
+    <Text>ZE/CD-25465</Text>
+   </Remark>
+   <Remark RPH="007" Type="General">
+    <Text>C‡ZE/CD-25465</Text>
+   </Remark>
+   <Remark Code="C" RPH="008" Type="Alpha-Coded">
+    <Text>CRC-CN/C7/ZW/ZZ/C1*STDR-N</Text>
+   </Remark>
+   <Remark RPH="008" Type="General">
+    <Text>C‡CRC-CN/C7/ZW/ZZ/C1*STDR-N</Text>
+   </Remark>
+   <Remark Code="H" RPH="009" Type="Alpha-Coded">
+    <Text>PC-IGS-BCD-BHD-B8D</Text>
+   </Remark>
+   <Remark RPH="009" Type="General">
+    <Text>H‡PC-IGS-BCD-BHD-B8D</Text>
+   </Remark>
+   <Remark Code="X" RPH="010" Type="Alpha-Coded">
+    <Text>PRO-INFOR/OID-ATL8B211P</Text>
+   </Remark>
+   <Remark RPH="010" Type="General">
+    <Text>X‡PRO-INFOR/OID-ATL8B211P</Text>
+   </Remark>
+   <Remark Code="R" RPH="011" Type="Alpha-Coded">
+    <Text>RAC-IGS</Text>
+   </Remark>
+   <Remark RPH="011" Type="General">
+    <Text>R‡RAC-IGS</Text>
+   </Remark>
+   <Remark Code="H" RPH="012" Type="Alpha-Coded">
+    <Text>U1-SR/CB/MT/SF/RL/HT</Text>
+   </Remark>
+   <Remark RPH="012" Type="General">
+    <Text>H‡U1-SR/CB/MT/SF/RL/HT</Text>
+   </Remark>
+   <Remark Code="B" RPH="013" Type="Alpha-Coded">
+    <Text>RET-90-XX-VERB-THANK YOU FOR CALLING BCD TRAVEL</Text>
+   </Remark>
+   <Remark RPH="013" Type="General">
+    <Text>B‡RET-90-XX-VERB-THANK YOU FOR CALLING BCD TRAVEL</Text>
+   </Remark>
+   <Remark RPH="014" Type="Itinerary">
+    <Text>**THANK YOU FOR CALLING BCD TRAVEL**</Text>
+   </Remark>
+   <Remark RPH="015" Type="Itinerary">
+    <Text>**WE APPRECIATE YOUR BUSINESS**‡‡</Text>
+   </Remark>
+   <Remark RPH="016" Type="Itinerary">
+    <Text>OUR OFFICE HOURS ARE MONDAY-FRIDAY 8AM-8PM EST</Text>
+   </Remark>
+   <Remark RPH="017" Type="Itinerary">
+    <Text>TO REACH THE OFFICE DURING BUSINESS HOURS CALL</Text>
+   </Remark>
+   <Remark RPH="018" Type="Itinerary">
+    <Text>TOLL FREE 866-578-7520</Text>
+   </Remark>
+   <Remark RPH="019" Type="Itinerary">
+    <Text>FOR AFTERHOURS EMERGENCY SERVICE PLEASE CALL</Text>
+   </Remark>
+   <Remark RPH="020" Type="Itinerary">
+    <Text>TOLL FREE 866-578-7520 AND REFERENCE VIT CODE</Text>
+   </Remark>
+   <Remark RPH="021" Type="Itinerary">
+    <Text>0O0G -ZERO,OSCAR,ZERO,GEORGE</Text>
+   </Remark>
+   <Remark RPH="022" Type="Itinerary">
+    <Text>INTL COLLECT CALLS ARE ACCEPTED AT 770-632-6825</Text>
+   </Remark>
+   <Remark RPH="023" Type="Itinerary">
+    <Text>******PLEASE NOTE***********</Text>
+   </Remark>
+   <Remark RPH="024" Type="Itinerary">
+    <Text>THERE IS A SERVICE FEE INCURRED WHEN CALLING THE</Text>
+   </Remark>
+   <Remark RPH="025" Type="Itinerary">
+    <Text>AFTERHOURS EMERGENCY SERVICES</Text>
+   </Remark>
+   <Remark RPH="026" Type="Itinerary">
+    <Text>****************************************</Text>
+   </Remark>
+   <Remark RPH="027" Type="Itinerary">
+    <Text>**EUROP ASSIST OFFERS TRAVEL, MEDICAL AND SECURITY</Text>
+   </Remark>
+   <Remark RPH="028" Type="Itinerary">
+    <Text>**SERVICES TO ALL INFOR TRAVELERS.  PLEASE CONTACT</Text>
+   </Remark>
+   <Remark RPH="029" Type="Itinerary">
+    <Text>**AT 866-832-6930 OR COLLECT AT 410-453-6330</Text>
+   </Remark>
+   <Remark RPH="030" Type="Itinerary">
+    <Text>**PLEASE PROVIDE ID CHB-75 ALONG WITH YOUR</Text>
+   </Remark>
+   <Remark RPH="031" Type="Itinerary">
+    <Text>**GROUP NUMBER 6477-60-75*****</Text>
+   </Remark>
+   <Remark RPH="032" Type="Itinerary">
+    <Text>**************************************</Text>
+   </Remark>
+   <Remark RPH="033" Type="Invoice">
+    <Text>Z*U8-0O0G-INFOR</Text>
+   </Remark>
+   <Remark RPH="034" Type="Invoice">
+    <Text>Z*U10-M.UN.INFOR.UN.US</Text>
+   </Remark>
+   <Remark RPH="035" Type="Invoice">
+    <Text>Z*U16-GX3137</Text>
+   </Remark>
+   <Remark Code="H" RPH="036" Type="Alpha-Coded">
+    <Text>HRC-HH/HL/HA/HB/HN/2H/HE*STDR-N</Text>
+   </Remark>
+   <Remark RPH="036" Type="General">
+    <Text>H‡HRC-HH/HL/HA/HB/HN/2H/HE*STDR-N</Text>
+   </Remark>
+   <Remark Code="R" RPH="037" Type="Alpha-Coded">
+    <Text>RC-HA-AMENITIES AND SERVICES</Text>
+   </Remark>
+   <Remark RPH="037" Type="General">
+    <Text>R‡RC-HA-AMENITIES AND SERVICES</Text>
+   </Remark>
+   <Remark Code="R" RPH="038" Type="Alpha-Coded">
+    <Text>RC-HB-ACCOMPANING CLIENT</Text>
+   </Remark>
+   <Remark RPH="038" Type="General">
+    <Text>R‡RC-HB-ACCOMPANING CLIENT</Text>
+   </Remark>
+   <Remark Code="R" RPH="039" Type="Alpha-Coded">
+    <Text>RC-HN-PREFERRED HOTEL UNAVAILABLE</Text>
+   </Remark>
+   <Remark RPH="039" Type="General">
+    <Text>R‡RC-HN-PREFERRED HOTEL UNAVAILABLE</Text>
+   </Remark>
+   <Remark Code="R" RPH="040" Type="Alpha-Coded">
+    <Text>RC-2H-PREF HTL REFUSED - LOWER RATE AT NONPREF</Text>
+   </Remark>
+   <Remark RPH="040" Type="General">
+    <Text>R‡RC-2H-PREF HTL REFUSED - LOWER RATE AT NONPREF</Text>
+   </Remark>
+   <Remark Code="R" RPH="041" Type="Alpha-Coded">
+    <Text>RC-HL-LOCATION</Text>
+   </Remark>
+   <Remark RPH="041" Type="General">
+    <Text>R‡RC-HL-LOCATION</Text>
+   </Remark>
+   <Remark Code="R" RPH="042" Type="Alpha-Coded">
+    <Text>RC-HH-ACCEPTED PREF HOTEL</Text>
+   </Remark>
+   <Remark RPH="042" Type="General">
+    <Text>R‡RC-HH-ACCEPTED PREF HOTEL</Text>
+   </Remark>
+   <Remark Code="R" RPH="043" Type="Alpha-Coded">
+    <Text>RC-HE-NO PREF HOTEL</Text>
+   </Remark>
+   <Remark RPH="043" Type="General">
+    <Text>R‡RC-HE-NO PREF HOTEL</Text>
+   </Remark>
+   <Remark Code="S" RPH="044" Type="Alpha-Coded">
+    <Text>COMPLEAT-STOP SEAT CHECK</Text>
+   </Remark>
+   <Remark RPH="044" Type="General">
+    <Text>S‡COMPLEAT-STOP SEAT CHECK</Text>
+   </Remark>
+   <Remark Code="B" RPH="045" Type="Alpha-Coded">
+    <Text>IATA - 11696705</Text>
+   </Remark>
+   <Remark RPH="045" Type="General">
+    <Text>B‡IATA - 11696705</Text>
+   </Remark>
+   <Remark Code="B" RPH="046" Type="Alpha-Coded">
+    <Text>SWABIZ NBR 99584785</Text>
+   </Remark>
+   <Remark RPH="046" Type="General">
+    <Text>B‡SWABIZ NBR 99584785</Text>
+   </Remark>
+   <Remark Code="B" RPH="047" Type="Alpha-Coded">
+    <Text>SUPERVISOR - JULIE STUMBO-FIELDS X212752</Text>
+   </Remark>
+   <Remark RPH="047" Type="General">
+    <Text>B‡SUPERVISOR - JULIE STUMBO-FIELDS X212752</Text>
+   </Remark>
+   <Remark Code="B" RPH="048" Type="Alpha-Coded">
+    <Text>ATPCO/SNAP CODE - INFO50/BCD20</Text>
+   </Remark>
+   <Remark RPH="048" Type="General">
+    <Text>B‡ATPCO/SNAP CODE - INFO50/BCD20</Text>
+   </Remark>
+   <Remark Code="B" RPH="049" Type="Alpha-Coded">
+    <Text>CAPP - YES</Text>
+   </Remark>
+   <Remark RPH="049" Type="General">
+    <Text>B‡CAPP - YES</Text>
+   </Remark>
+   <Remark Code="B" RPH="050" Type="Alpha-Coded">
+    <Text>LONG DISTANCE CODE - 104418</Text>
+   </Remark>
+   <Remark RPH="050" Type="General">
+    <Text>B‡LONG DISTANCE CODE - 104418</Text>
+   </Remark>
+   <Remark Code="B" RPH="051" Type="Alpha-Coded">
+    <Text>ONLINE TOOL - GET THERE</Text>
+   </Remark>
+   <Remark RPH="051" Type="General">
+    <Text>B‡ONLINE TOOL - GET THERE</Text>
+   </Remark>
+   <Remark RPH="052" Type="Client Address">
+    <Text>INFOR GLOBAL SOLUTIONS</Text>
+   </Remark>
+   <Remark Code="S" RPH="053" Type="Alpha-Coded">
+    <Text>COMPLEAT-SEAT PREFS/NA</Text>
+   </Remark>
+   <Remark RPH="053" Type="General">
+    <Text>S‡COMPLEAT-SEAT PREFS/NA</Text>
+   </Remark>
+   <Remark Code="S" RPH="054" Type="Alpha-Coded">
+    <Text>TITLE-VP SALES AREA</Text>
+   </Remark>
+   <Remark RPH="054" Type="General">
+    <Text>S‡TITLE-VP SALES AREA</Text>
+   </Remark>
+   <Remark Code="S" RPH="055" Type="Alpha-Coded">
+    <Text>VP LEVEL</Text>
+   </Remark>
+   <Remark RPH="055" Type="General">
+    <Text>S‡VP LEVEL</Text>
+   </Remark>
+   <Remark Code="C" RPH="056" Type="Alpha-Coded">
+    <Text>ZL/ID-NE553937230 ZI/ID-XH603Q ZE/ID-39607195</Text>
+   </Remark>
+   <Remark RPH="056" Type="General">
+    <Text>C‡ZL/ID-NE553937230 ZI/ID-XH603Q ZE/ID-39607195</Text>
+   </Remark>
+   <Remark Code="C" RPH="057" Type="Alpha-Coded">
+    <Text>TYPE-ICAR</Text>
+   </Remark>
+   <Remark RPH="057" Type="General">
+    <Text>C‡TYPE-ICAR</Text>
+   </Remark>
+   <Remark Code="C" RPH="058" Type="Alpha-Coded">
+    <Text>/GAX379618808322004EXP08 17-BOARD</Text>
+   </Remark>
+   <Remark RPH="058" Type="General">
+    <Text>C‡/GAX379618808322004EXP08 17-BOARD</Text>
+   </Remark>
+   <Remark Code="H" RPH="059" Type="Alpha-Coded">
+    <Text>/GAX379618808322004EXP08 17-BOARD</Text>
+   </Remark>
+   <Remark RPH="059" Type="General">
+    <Text>H‡/GAX379618808322004EXP08 17-BOARD</Text>
+   </Remark>
+   <Remark Code="H" RPH="060" Type="Alpha-Coded">
+    <Text>EH/ID-967027578 SI/ID-G50376714788</Text>
+   </Remark>
+   <Remark RPH="060" Type="General">
+    <Text>H‡EH/ID-967027578 SI/ID-G50376714788</Text>
+   </Remark>
+   <Remark Code="H" RPH="061" Type="Alpha-Coded">
+    <Text>HY/ID-G63708983F SW/ID-G50376714788</Text>
+   </Remark>
+   <Remark RPH="061" Type="General">
+    <Text>H‡HY/ID-G63708983F SW/ID-G50376714788</Text>
+   </Remark>
+   <Remark Code="H" RPH="062" Type="Alpha-Coded">
+    <Text>EM/ID-836721563</Text>
+   </Remark>
+   <Remark RPH="062" Type="General">
+    <Text>H‡EM/ID-836721563</Text>
+   </Remark>
+   <Remark Code="H" RPH="063" Type="Alpha-Coded">
+    <Text>TYPE-KING SIZE NON SMOKING</Text>
+   </Remark>
+   <Remark RPH="063" Type="General">
+    <Text>H‡TYPE-KING SIZE NON SMOKING</Text>
+   </Remark>
+   <Remark Code="H" RPH="064" Type="Alpha-Coded">
+    <Text>MISC-KING BED AWAY FROM ELEVATORS</Text>
+   </Remark>
+   <Remark RPH="064" Type="General">
+    <Text>H‡MISC-KING BED AWAY FROM ELEVATORS</Text>
+   </Remark>
+   <Remark RPH="065" Type="Invoice">
+    <Text>Z*S1-41446</Text>
+   </Remark>
+   <Remark RPH="066" Type="Invoice">
+    <Text>Z*S2-INFOR</Text>
+   </Remark>
+   <Remark RPH="067" Type="Invoice">
+    <Text>Z*S3-SALES</Text>
+   </Remark>
+   <Remark RPH="068" Type="Invoice">
+    <Text>Z*S4-SMG</Text>
+   </Remark>
+   <Remark RPH="069" Type="Invoice">
+    <Text>Z*S5-40411</Text>
+   </Remark>
+   <Remark RPH="070" Type="Invoice">
+    <Text>Z*G8-24.5071507</Text>
+   </Remark>
+   <Remark RPH="071" Type="Invoice">
+    <Text>Z*U20-KEVIN CURRY</Text>
+   </Remark>
+   <Remark RPH="072" Type="Invoice">
+    <Text>Z*U14-MBOARD</Text>
+   </Remark>
+   <Remark RPH="073" Type="Invoice">
+    <Text>Z*U15-INFOR</Text>
+   </Remark>
+   <Remark Code="X" RPH="074" Type="Alpha-Coded">
+    <Text>TSPM-TP-24.5071507</Text>
+   </Remark>
+   <Remark RPH="074" Type="General">
+    <Text>X‡TSPM-TP-24.5071507</Text>
+   </Remark>
+   <Remark Code="R" RPH="075" Type="Alpha-Coded">
+    <Text>GT ID-41446</Text>
+   </Remark>
+   <Remark RPH="075" Type="General">
+    <Text>R‡GT ID-41446</Text>
+   </Remark>
+   <Remark Code="P" RPH="076" Type="Alpha-Coded">
+    <Text>PSPT-US492496746 EXP-17MAY22</Text>
+   </Remark>
+   <Remark RPH="076" Type="General">
+    <Text>P‡PSPT-US492496746 EXP-17MAY22</Text>
+   </Remark>
+   <Remark Code="P" RPH="077" Type="Alpha-Coded">
+    <Text>POI-UNITED STATES DOI-18MAY12</Text>
+   </Remark>
+   <Remark RPH="077" Type="General">
+    <Text>P‡POI-UNITED STATES DOI-18MAY12</Text>
+   </Remark>
+   <Remark Code="P" RPH="078" Type="Alpha-Coded">
+    <Text>HM-10485 STANYAN STREET</Text>
+   </Remark>
+   <Remark RPH="078" Type="General">
+    <Text>P‡HM-10485 STANYAN STREET</Text>
+   </Remark>
+   <Remark Code="P" RPH="079" Type="Alpha-Coded">
+    <Text>HM-ALPHARETTA,GA 30022 US</Text>
+   </Remark>
+   <Remark RPH="079" Type="General">
+    <Text>P‡HM-ALPHARETTA,GA 30022 US</Text>
+   </Remark>
+   <Remark Code="P" RPH="080" Type="Alpha-Coded">
+    <Text>ECTC-SHERRIE BOARD</Text>
+   </Remark>
+   <Remark RPH="080" Type="General">
+    <Text>P‡ECTC-SHERRIE BOARD</Text>
+   </Remark>
+   <Remark Code="P" RPH="081" Type="Alpha-Coded">
+    <Text>ECTC-678-296-2531</Text>
+   </Remark>
+   <Remark RPH="081" Type="General">
+    <Text>P‡ECTC-678-296-2531</Text>
+   </Remark>
+   <Remark Code="Y" RPH="082" Type="Alpha-Coded">
+    <Text>TOEN-MARK.BOARD.AT.INFOR.COM</Text>
+   </Remark>
+   <Remark RPH="082" Type="General">
+    <Text>Y‡TOEN-MARK.BOARD.AT.INFOR.COM</Text>
+   </Remark>
+   <Remark Code="Y" RPH="083" Type="Alpha-Coded">
+    <Text>CCEN-SUE.DUNCAN.AT.INFOR.COM</Text>
+   </Remark>
+   <Remark RPH="083" Type="General">
+    <Text>Y‡CCEN-SUE.DUNCAN.AT.INFOR.COM</Text>
+   </Remark>
+   <Remark Code="Y" RPH="084" Type="Alpha-Coded">
+    <Text>CCEN-SUE.DUNCAN.AT.INFOR.COM</Text>
+   </Remark>
+   <Remark RPH="084" Type="General">
+    <Text>Y‡CCEN-SUE.DUNCAN.AT.INFOR.COM</Text>
+   </Remark>
+   <Remark Code="Y" RPH="085" Type="Alpha-Coded">
+    <Text>MGEN-KEVIN.CURRY.AT.INFOR.COM</Text>
+   </Remark>
+   <Remark RPH="085" Type="General">
+    <Text>Y‡MGEN-KEVIN.CURRY.AT.INFOR.COM</Text>
+   </Remark>
+   <Remark Code="Y" RPH="086" Type="Alpha-Coded">
+    <Text>A1EN-WESLEY.WRIGHT.AT.INFOR.COM</Text>
+   </Remark>
+   <Remark RPH="086" Type="General">
+    <Text>Y‡A1EN-WESLEY.WRIGHT.AT.INFOR.COM</Text>
+   </Remark>
+   <Remark Code="Y" RPH="087" Type="Alpha-Coded">
+    <Text>A2EN-HQ.UN.APPR.AT.INFOR.COM</Text>
+   </Remark>
+   <Remark RPH="087" Type="General">
+    <Text>Y‡A2EN-HQ.UN.APPR.AT.INFOR.COM</Text>
+   </Remark>
+   <Remark Code="B" RPH="088" Type="Alpha-Coded">
+    <Text>LANG-EN</Text>
+   </Remark>
+   <Remark RPH="088" Type="General">
+    <Text>B‡LANG-EN</Text>
+   </Remark>
+   <Remark Code="P" RPH="089" Type="Alpha-Coded">
+    <Text>FFN-MARK</Text>
+   </Remark>
+   <Remark RPH="089" Type="General">
+    <Text>P‡FFN-MARK</Text>
+   </Remark>
+   <Remark Code="P" RPH="090" Type="Alpha-Coded">
+    <Text>FLN-BOARD</Text>
+   </Remark>
+   <Remark RPH="090" Type="General">
+    <Text>P‡FLN-BOARD</Text>
+   </Remark>
+   <Remark Code="P" RPH="091" Type="Alpha-Coded">
+    <Text>DOB-27SEP58/GND-M</Text>
+   </Remark>
+   <Remark RPH="091" Type="General">
+    <Text>P‡DOB-27SEP58/GND-M</Text>
+   </Remark>
+   <Remark Code="P" RPH="092" Type="Alpha-Coded">
+    <Text>OPT CC1-AX379618808322004‡08/17</Text>
+   </Remark>
+   <Remark RPH="092" Type="General">
+    <Text>P‡OPT CC1-AX379618808322004‡08/17</Text>
+   </Remark>
+   <Remark RPH="093" Type="Invoice">
+    <Text>DCIPI‡TCP*20.20426</Text>
+   </Remark>
+   <Remark RPH="094" Type="Invoice">
+    <Text>DCIPI‡TPP*24.5071507</Text>
+   </Remark>
+   <Remark RPH="095" Type="Invoice">
+    <Text>Z*S6-NO BILL</Text>
+   </Remark>
+   <Remark RPH="096" Type="Invoice">
+    <Text>Z*S7-CP</Text>
+   </Remark>
+   <Remark RPH="097" Type="Invoice">
+    <Text>Z*U2-OP-02024635</Text>
+   </Remark>
+   <Remark Code="X" RPH="098" Type="Alpha-Coded">
+    <Text>SCRIPT-NEWPNR/PROFILE-Y/12NOV/1212/441212.</Text>
+   </Remark>
+   <Remark RPH="098" Type="General">
+    <Text>X‡SCRIPT-NEWPNR/PROFILE-Y/12NOV/1212/441212.</Text>
+   </Remark>
+   <Remark Code="W" RPH="099" Type="Alpha-Coded">
+    <Text>M*AQ-0O0G200</Text>
+   </Remark>
+   <Remark RPH="099" Type="General">
+    <Text>W‡M*AQ-0O0G200</Text>
+   </Remark>
+   <Remark RPH="100" Type="Invoice">
+    <Text>Z*AGT-75820</Text>
+   </Remark>
+   <Remark RPH="101" Type="Historical">
+    <Text>TKT1-1  AA          691  V 16NOV M  ATL  CLT 1040A 1157A</Text>
+   </Remark>
+   <Remark RPH="102" Type="Historical">
+    <Text>TKT1-1  AA          608  V 16NOV M  CLT  JFK 0109P 0258P</Text>
+   </Remark>
+   <Remark RPH="103" Type="Historical">
+    <Text>TKT1-2  UA          436  U 18NOV W  LGA  ORD 1000A 1139A</Text>
+   </Remark>
+   <Remark RPH="104" Type="Historical">
+    <Text>TKT1-2  UA  /**    5052  U 18NOV W  ORD  CVG 1215P 0224P</Text>
+   </Remark>
+   <Remark RPH="105" Type="Historical">
+    <Text>TKT1-OPERATED BY /TRANS STATES AIRLINES DBA UNITED EXPRES</Text>
+   </Remark>
+   <Remark RPH="106" Type="Historical">
+    <Text>TKT1-3  UA  /**    3638  Q 18NOV W  CVG  ORD 0436P 0450P</Text>
+   </Remark>
+   <Remark RPH="107" Type="Historical">
+    <Text>TKT1-OPERATED BY /GOJET AIRLINES DBA UNITED EXPRESS</Text>
+   </Remark>
+   <Remark RPH="108" Type="Historical">
+    <Text>TKT1-3  UA  /**    5566  Q 18NOV W  ORD  ATL 0535P 0837P</Text>
+   </Remark>
+   <Remark RPH="109" Type="Historical">
+    <Text>TKT1-TOTAL FARE - USD 655.20 DECLINED DUE TO TP</Text>
+   </Remark>
+   <Remark RPH="110" Type="Historical">
+    <Text>TKT1-DECLINED WPNI/T2/K1‡IINF50/12NOV</Text>
+   </Remark>
+   <Remark Code="F" RPH="111" Type="Alpha-Coded">
+    <Text>TKT1-1  AA          691  V 16NOV M  ATL  CLT 1040A 1157A</Text>
+   </Remark>
+   <Remark RPH="111" Type="General">
+    <Text>F‡TKT1-1  AA          691  V 16NOV M  ATL  CLT 1040A 1157A</Text>
+   </Remark>
+   <Remark Code="F" RPH="112" Type="Alpha-Coded">
+    <Text>TKT1-1  AA          608  V 16NOV M  CLT  JFK 0109P 0258P</Text>
+   </Remark>
+   <Remark RPH="112" Type="General">
+    <Text>F‡TKT1-1  AA          608  V 16NOV M  CLT  JFK 0109P 0258P</Text>
+   </Remark>
+   <Remark Code="F" RPH="113" Type="Alpha-Coded">
+    <Text>TKT1-2  UA          436  U 18NOV W  LGA  ORD 1000A 1139A</Text>
+   </Remark>
+   <Remark RPH="113" Type="General">
+    <Text>F‡TKT1-2  UA          436  U 18NOV W  LGA  ORD 1000A 1139A</Text>
+   </Remark>
+   <Remark Code="F" RPH="114" Type="Alpha-Coded">
+    <Text>TKT1-2  UA  /**    5052  U 18NOV W  ORD  CVG 1215P 0224P</Text>
+   </Remark>
+   <Remark RPH="114" Type="General">
+    <Text>F‡TKT1-2  UA  /**    5052  U 18NOV W  ORD  CVG 1215P 0224P</Text>
+   </Remark>
+   <Remark Code="F" RPH="115" Type="Alpha-Coded">
+    <Text>TKT1-OPERATED BY /TRANS STATES AIRLINES DBA UNITED EXPRES</Text>
+   </Remark>
+   <Remark RPH="115" Type="General">
+    <Text>F‡TKT1-OPERATED BY /TRANS STATES AIRLINES DBA UNITED EXPRES</Text>
+   </Remark>
+   <Remark Code="F" RPH="116" Type="Alpha-Coded">
+    <Text>TKT1-3  UA  /**    3638  Q 18NOV W  CVG  ORD 0436P 0450P</Text>
+   </Remark>
+   <Remark RPH="116" Type="General">
+    <Text>F‡TKT1-3  UA  /**    3638  Q 18NOV W  CVG  ORD 0436P 0450P</Text>
+   </Remark>
+   <Remark Code="F" RPH="117" Type="Alpha-Coded">
+    <Text>TKT1-OPERATED BY /GOJET AIRLINES DBA UNITED EXPRESS</Text>
+   </Remark>
+   <Remark RPH="117" Type="General">
+    <Text>F‡TKT1-OPERATED BY /GOJET AIRLINES DBA UNITED EXPRESS</Text>
+   </Remark>
+   <Remark Code="F" RPH="118" Type="Alpha-Coded">
+    <Text>TKT1-3  UA  /**    5566  Q 18NOV W  ORD  ATL 0535P 0837P</Text>
+   </Remark>
+   <Remark RPH="118" Type="General">
+    <Text>F‡TKT1-3  UA  /**    5566  Q 18NOV W  ORD  ATL 0535P 0837P</Text>
+   </Remark>
+   <Remark Code="F" RPH="119" Type="Alpha-Coded">
+    <Text>TKT1-TOTAL FARE - USD 655.20 DECLINED DUE TO TP</Text>
+   </Remark>
+   <Remark RPH="119" Type="General">
+    <Text>F‡TKT1-TOTAL FARE - USD 655.20 DECLINED DUE TO TP</Text>
+   </Remark>
+   <Remark Code="F" RPH="120" Type="Alpha-Coded">
+    <Text>TKT1-DECLINED WPNI/T2/K1‡IINF50/12NOV</Text>
+   </Remark>
+   <Remark RPH="120" Type="General">
+    <Text>F‡TKT1-DECLINED WPNI/T2/K1‡IINF50/12NOV</Text>
+   </Remark>
+   <Remark Code="F" RPH="121" Type="Alpha-Coded">
+    <Text>TKT1-A*TP*655.20*ET*XX*CDL*XX*XX</Text>
+   </Remark>
+   <Remark RPH="121" Type="General">
+    <Text>F‡TKT1-A*TP*655.20*ET*XX*CDL*XX*XX</Text>
+   </Remark>
+   <Remark Code="F" RPH="122" Type="Alpha-Coded">
+    <Text>TKT1-FQ-1266.78*PQ1*KA0UX0MA/XX9A7 KR3WA0MQ/X-12NOV-BV</Text>
+   </Remark>
+   <Remark RPH="122" Type="General">
+    <Text>F‡TKT1-FQ-1266.78*PQ1*KA0UX0MA/XX9A7 KR3WA0MQ/X-12NOV-BV</Text>
+   </Remark>
+   <Remark RPH="123" Type="Historical">
+    <Text>TKT1-A*TP*655.20*ET*XX*CDL*XX*XX</Text>
+   </Remark>
+   <Remark RPH="124" Type="Historical">
+    <Text>TKT1-FQ-1266.78*PQ1*KA0UX0MA/XX9A7 KR3WA0MQ/X-12NOV-BV</Text>
+   </Remark>
+   <Remark Code="X" RPH="125" Type="Alpha-Coded">
+    <Text>SCRIPT-PRICE/12NOV/1215/501512.</Text>
+   </Remark>
+   <Remark RPH="125" Type="General">
+    <Text>X‡SCRIPT-PRICE/12NOV/1215/501512.</Text>
+   </Remark>
+   <Remark RPH="126" Type="Invoice">
+    <Text>Z*G4-N</Text>
+   </Remark>
+  </RemarkInfo>
+ </TravelItinerary>
+</TravelItineraryReadRS></soap-env:Body></soap-env:Envelope>

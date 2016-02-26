@@ -2,6 +2,7 @@
   (:require [clojurewerkz.elastisch.rest :as esr]
             [com.stuartsierra.component :as component]))
 
+
 (defrecord ES [url]
   component/Lifecycle
   (start [this]
