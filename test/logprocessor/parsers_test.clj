@@ -1,9 +1,11 @@
 (ns logprocessor.parsers-test
-  (:require [clj-xpath.core :as xp]
+  (:require [clj-time.core :as t]
+            [clj-xpath.core :as xp]
             [clojure.java.io :as io]
             [logprocessor
              [core :as core]
-             [parsers :refer :all]]
+             [parsers :refer :all]
+             [utils :as utils]]
             [midje.sweet :refer :all]
             [user :as dev]))
 
@@ -44,7 +46,7 @@
   (let [calls 10]
     (count
      (map
-      #(update-in % [:source] process-file)
+      process-item
       (take calls (dev/walk-over-file "examples.zip")))) => calls)
 
   ;; Typical example of parsed xml
@@ -63,3 +65,9 @@
 (fact "Parsing retrive PNR request"
   ($> "rq-retrieve" extract-body-node parse-retrieve-rq) => {:id "JIHENT"}
   ($> "rq-retrieve" parse-method-name) => :TravelItineraryReadRQ)
+
+(fact :slow "Loading S3 files, is slow for obvious reasins"
+  (count
+   (map
+    process-item
+    (take 10 (utils/walk-over-s3 :bcd1 :fokker (t/date-time 2016 2 2))))) => 10)

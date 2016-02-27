@@ -31,7 +31,6 @@
    update :es
    (fn [_] (component/start (es/->ES "http://localhost:9200/")))))
 
-
 (defn reset
   "Reset whole app"
   []
@@ -40,6 +39,5 @@
 
 ;; (reset)
 ;; (map :name (take 3 (walk-over-file "examples.zip")))
-
 ;; (def rsp (http/get "http://google.com"))
 ;; (def rsp2 (http/get (->> @rsp :headers :location)))

@@ -50,9 +50,3 @@
     (cons {:source (get-s3-object (first entities))
            :name (first entities)}
           (walk-over-s3 (rest entities))))))
-
-;; (take 3
-;;       (map
-;;        (fn [v]
-;;          (update v :source #(count %)))
-;;        (walk-over-s3 :bcd1 :fokker (t/date-time 2016 2 2))))
