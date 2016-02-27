@@ -1,7 +1,9 @@
 (ns logprocessor.utils
-  (:require [clj-yaml.core :as yaml]
-            [fs.core :as fs]
-            [clj-time.core :as t]))
+  (:require [amazonica.aws.s3 :as s3]
+            [amazonica.core :as aws]
+            [clj-time.core :as t]
+            [clj-yaml.core :as yaml]
+            [fs.core :as fs]))
 
 (def s3-root "lboeing_xml")
 

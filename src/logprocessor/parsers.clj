@@ -64,3 +64,12 @@
              {:errors errors}
              (if parse-details
                ((resolve parse-details) subdoc))))))
+
+(defn process-item
+  "item should be dict with name and source"
+  [item]
+  (try
+    (-> item :source process-file)
+    (catch Exception e
+      {:exception e
+       :filepath (:name item)})))
