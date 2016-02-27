@@ -2,7 +2,8 @@
   (:require [clojure.java.io :as io]
             [clojure.tools.namespace.repl :refer [refresh]]
             [com.stuartsierra.component :as component]
-            [logprocessor.es :as es])
+            [logprocessor.es :as es]
+            [org.httpkit.client :as http])
   (:import java.util.zip.ZipFile))
 
 (def app-state (atom {:es nil}))
@@ -38,5 +39,7 @@
   (refresh :after 'user/start))
 
 ;; (reset)
-
 ;; (map :name (take 3 (walk-over-file "examples.zip")))
+
+;; (def rsp (http/get "http://google.com"))
+;; (def rsp2 (http/get (->> @rsp :headers :location)))
