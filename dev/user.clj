@@ -20,7 +20,7 @@
   ([zipfile entries]
    (lazy-seq
     (let [entry (first entries)
-          result {:source (->> entry (.getInputStream zipfile) slurp)
+          result {:source (future (->> entry (.getInputStream zipfile) slurp))
                   :name (.getName entry)}]
       (cons result
             (walk-over-file zipfile (rest entries)))))))

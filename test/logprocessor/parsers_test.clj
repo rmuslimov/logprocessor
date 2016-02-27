@@ -43,11 +43,11 @@
   ($> "rsp-error" process-file) => (contains {:errors anything}))
 
 (facts "Processing xml from zip file"
-  (let [calls 10]
+  (let [calls 2]
     (count
      (map
       process-item
-      (take calls (dev/walk-over-file "examples.zip")))) => calls)
+      (take calls (dev/walk-over-file "examples.zip"))))) => 2
 
   ;; Typical example of parsed xml
   ($> "rq-retrieve" process-file) =>
@@ -71,3 +71,5 @@
    (map
     process-item
     (take 10 (utils/walk-over-s3 :bcd1 :fokker (t/date-time 2016 2 2))))) => 10)
+
+;; (def loadall (utils/walk-over-s3 :bcd1 :fokker (t/date-time 2016 2 2)))

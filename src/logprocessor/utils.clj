@@ -41,12 +41,14 @@
     (->> key (s3/get-object s3-root) :object-content slurp)))
 
 (defn walk-over-s3
+  "Lasy seq, iterating over s3 file and returning future for loaded s3 file"
   ([level app date]
    (walk-over-s3
     (let [{objs :object-summaries} (list-s3-objects level app date)]
       (map :key objs))))
   ([entities]
    (lazy-seq
-    (cons {:source (get-s3-object (first entities))
+    (cons {:source (future (get-s3-object (first entities)))
            :name (first entities)}
-          (walk-over-s3 (rest entities))))))
+          (when (seq (rest entities))
+            (walk-over-s3 (rest entities)))))))

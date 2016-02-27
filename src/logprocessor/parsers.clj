@@ -69,7 +69,7 @@
   "item should be dict with name and source"
   [item]
   (try
-    (-> item :source process-file)
+    (process-file @(:source item))
     (catch Exception e
       {:exception e
        :filepath (:name item)})))
