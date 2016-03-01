@@ -62,10 +62,22 @@
 (defn process
   "Get list of item to process, execute f in :source of each item using th"
   [items]
-  (map
-   (fn [it] (cp/pmap core/net-pool #(update % :source (fn [f] (f))) it))
-   (partition psize psize nil items)))
+  (flatten
+   (map
+    (fn [it] (cp/pmap core/net-pool #(update % :source (fn [f] (f))) it))
+    (partition psize psize nil items))))
 
 ;; Pull all xml for date, run processing on them and count number
 ;; (time (reduce + (map count (process (walk-over-s3 :bcd2 :cessna (t/date-time 2016 2 22))))))
-;; (time (reduce + (map count (process (dev/walk-over-file "examples.zip")))))
+
+;; Parallel version with processing xml: 2.4 sec
+;; (time
+;;  (count
+;;   (cp/pmap
+;;    core/cpu-pool
+;;    core/process-item
+;;    (process (dev/walk-over-file "examples.zip")))))
+
+;; single thread processing 9.4 sec
+;; (time (count
+;;        (map core/process-item (process (dev/walk-over-file "examples.zip")))))

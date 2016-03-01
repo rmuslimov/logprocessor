@@ -4,6 +4,7 @@
             [logprocessor.parsers :as p]))
 
 (def net-pool (cp/threadpool 100))
+(def cpu-pool (cp/threadpool (cp/ncpus)))
 
 (def
   ^{:doc "Each SOAP may have extension with returns specific information."}
