@@ -20,24 +20,14 @@
   ([zipfile entries]
    (lazy-seq
     (let [entry (first entries)
-          result {:source (future (->> entry (.getInputStream zipfile) slurp))
+          result {:source (fn [] (->> entry (.getInputStream zipfile) slurp))
                   :name (.getName entry)}]
-      (cons result
-            (walk-over-file zipfile (rest entries)))))))
-
-(defn start []
-  (swap!
-   app-state
-   update :es
-   (fn [_] (component/start (es/->ES "http://localhost:9200/")))))
+      (if (empty? (rest entries))
+        (list result)
+        (cons result
+              (walk-over-file zipfile (rest entries))))))))
 
 (defn reset
   "Reset whole app"
   []
-  (swap! app-state component/stop)
-  (refresh :after 'user/start))
-
-;; (reset)
-;; (map :name (take 3 (walk-over-file "examples.zip")))
-;; (def rsp (http/get "http://google.com"))
-;; (def rsp2 (http/get (->> @rsp :headers :location)))
+  (refresh))

@@ -13,7 +13,9 @@
                  [clj-yaml "0.4.0"]
                  [fs "1.3.3"]
                  [clj-time "0.9.0"]
-                 [joda-time/joda-time "2.9.2"]]
+                 [joda-time/joda-time "2.9.2"]
+                 [org.clojure/data.json "0.2.6"]
+                 [com.climate/claypoole "1.1.2"]]
   :main ^:skip-aot logprocessor.core
   :target-path "target/%s"
   :profiles {:dev {:source-paths ["dev"]}

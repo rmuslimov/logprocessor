@@ -1,18 +1,37 @@
 (ns logprocessor.core
   (:gen-class)
-  (:require [clj-time.core :as t]
-            [clj-xpath.core :as xp]
-            [clojure.java.io :as io]
-            [logprocessor
-             [parsers :as parsers]
-             [utils :as utils]]))
+  (:require [com.climate.claypoole :as cp]
+            [logprocessor.parsers :as p]))
 
-(defn walk-over-local-files
-  "Local test only local files interator"
-  [store]
-  (let [store (-> store io/resource io/file)
-        files (->> store file-seq rest)]
-    (map #(-> % slurp xp/xml->doc) files)))
+(def net-pool (cp/threadpool 100))
+
+(def
+  ^{:doc "Each SOAP may have extension with returns specific information."}
+  details-mapping
+  {:EndTransactionRQ p/parse-et-rq
+   :TravelItineraryReadRQ p/parse-retrieve-rq})
+
+(defn process-file
+  "Processing xmldoc return map representing it's structure."
+  [xmldoc]
+  (let [subdoc (p/extract-body-node xmldoc)
+        errors (p/parse-error-info subdoc)
+        parse-details (details-mapping (p/parse-method-name xmldoc))]
+    (merge
+     (p/parse-header-info xmldoc)
+     (if-not (empty? errors)
+       {:errors errors}
+       (if parse-details
+         (parse-details subdoc))))))
+
+(defn process-item
+  "item should be dict with name and source"
+  [item]
+  (try
+    (process-file (:source item))
+    (catch Exception e
+      {:exception e
+       :filepath (:name item)})))
 
 (defn -main
   "Do nothing for now."

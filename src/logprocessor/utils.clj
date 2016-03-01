@@ -3,9 +3,13 @@
             [amazonica.core :as aws]
             [clj-time.core :as t]
             [clj-yaml.core :as yaml]
-            [fs.core :as fs]))
+            [com.climate.claypoole :as cp]
+            [fs.core :as fs]
+            [logprocessor.core :as core]
+            [user :as dev]))
 
 (def s3-root "lboeing_xml")
+(def psize 100)
 
 (defn get-path-by-params
   "Get getgoing styled s3 path for given params"
@@ -26,13 +30,15 @@
   "Get full list of available xml on s3."
   [level app date]
   (aws/with-credential (get-creds)
-    (s3/list-objects
-     s3-root
-     (get-path-by-params level app date))))
-
-;; (get-path-by-params :bcd1 :fokker (t/date-time 2016 2 2))
-;; (list-s3-objects :bcd1 :fokker (t/date-time 2016 2 2))
-;; (s3/list-objects s3-root "bcd1/fokker/y=2016/m=02/d=02/")
+    (let [prefix (get-path-by-params level app date)]
+      (loop [items [] marker nil]
+        (let [rsp
+              (s3/list-objects
+               :bucket-name s3-root :prefix prefix :marker marker)]
+          (if-not (:truncated? rsp)
+            (apply conj items (:object-summaries rsp))
+            (recur (apply conj items (:object-summaries rsp))
+                   (:next-marker rsp))))))))
 
 (defn get-s3-object
   ""
@@ -44,11 +50,22 @@
   "Lasy seq, iterating over s3 file and returning future for loaded s3 file"
   ([level app date]
    (walk-over-s3
-    (let [{objs :object-summaries} (list-s3-objects level app date)]
-      (map :key objs))))
+    (map :key (list-s3-objects level app date))))
   ([entities]
    (lazy-seq
-    (cons {:source (future (get-s3-object (first entities)))
-           :name (first entities)}
-          (when (seq (rest entities))
-            (walk-over-s3 (rest entities)))))))
+    (let [entry (first entities)
+          result {:source (fn [] (get-s3-object entry)) :name entry}]
+      (if (empty? (rest entities))
+        (list result)
+        (cons result (walk-over-s3 (rest entities))))))))
+
+(defn process
+  "Get list of item to process, execute f in :source of each item using th"
+  [items]
+  (map
+   (fn [it] (cp/pmap core/net-pool #(update % :source (fn [f] (f))) it))
+   (partition psize psize nil items)))
+
+;; Pull all xml for date, run processing on them and count number
+;; (time (reduce + (map count (process (walk-over-s3 :bcd2 :cessna (t/date-time 2016 2 22))))))
+;; (time (reduce + (map count (process (dev/walk-over-file "examples.zip")))))
