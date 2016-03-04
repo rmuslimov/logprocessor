@@ -1,8 +1,12 @@
 (ns logprocessor.es
-  (:require [clojure.data.json :as json]
+  (:require [clj-time.core :as t]
+            [clojure.data.json :as json]
+            [clojure.string :as string]
+            [logprocessor.utils :as utils]
             [org.httpkit.client :as http]))
 
 (def elastic-url "http://lf:9200")
+(def es-bulk-size 100)
 
 (def es-mapping
   {"request"
@@ -45,11 +49,39 @@
      (es-url (format "%s/%s/%s" idx _type id))
      {:body (json/write-str (dissoc item :message-id))})))
 
-(defn put-items!
+(defn put-bulk-items!
   "Use bulk api for putting many items"
-  []
-  )
+  [idx _type items]
+  (http/put
+   (es-url (format "%s/%s/_bulk" idx _type)) {:body items}))
 
+(defn prepend-each-item-with
+  [prepend-func items]
+  (loop [items items result []]
+    (if (empty? items)
+      result
+      (recur
+       (rest items)
+       (conj result (prepend-func (first items)) (first items))))))
+
+(defn iter-es-bulk-documents
+  "Generates seq for ES bulk API, param should lazy-seq"
+  [data]
+  (->>
+   data
+   utils/intensive-processing-items
+   (map #(assoc % :id (:message-id %)))
+   (prepend-each-item-with (fn [x] {:index {:_id (:id x)}}))
+   (map json/write-str)
+   (partition-all es-bulk-size)
+   (map #(string/join "\n" %))))
+
+;; Insert all documents from zip
+;; (->>
+;;  ;; (dev/walk-over-file "examples.zip")
+;;  (utils/walk-over-s3 :bcd2 :cessna (t/date-time 2016 2 22))
+;;  iter-es-bulk-documents
+;;  (map #(put-bulk-items! "l5" "sabre" %)))a
 
 ;; @(rewrite-index! "l5")
 ;; @(http/delete (es-url "l5"))

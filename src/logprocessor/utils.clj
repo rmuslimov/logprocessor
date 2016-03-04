@@ -3,6 +3,8 @@
             [amazonica.core :as aws]
             [clj-time.core :as t]
             [clj-yaml.core :as yaml]
+            [clojure.data.json :as json]
+            [clojure.string :as string]
             [com.climate.claypoole :as cp]
             [fs.core :as fs]
             [logprocessor.core :as core]
@@ -72,12 +74,17 @@
 
 ;; Parallel version with processing xml: 2.4 sec
 ;; (time
-;;  (count
+;;  (take 10
 ;;   (cp/pmap
 ;;    core/cpu-pool
 ;;    core/process-item
 ;;    (process (dev/walk-over-file "examples.zip")))))
 
-;; single thread processing 9.4 sec
+;; Single thread processing 9.4 sec
 ;; (time (count
 ;;        (map core/process-item (process (dev/walk-over-file "examples.zip")))))
+
+(defn intensive-processing-items
+  "Process files and prepare for ES"
+  [data]
+  (cp/pmap core/cpu-pool core/process-item (process data)))
