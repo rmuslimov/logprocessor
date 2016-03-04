@@ -77,11 +77,14 @@
    (map #(string/join "\n" %))))
 
 ;; Insert all documents from zip
-;; (->>
-;;  ;; (dev/walk-over-file "examples.zip")
-;;  (utils/walk-over-s3 :bcd2 :cessna (t/date-time 2016 2 22))
-;;  iter-es-bulk-documents
-;;  (map #(put-bulk-items! "l5" "sabre" %)))a
+(->>
+ (dev/walk-over-file "examples.zip")
+ ;; (utils/walk-over-s3 :bcd2 :cessna (t/date-time 2016 2 22))
+ iter-es-bulk-documents
+ (map #(put-bulk-items! "l5" "sabre" %)))
+
+;; (utils/intensive-processing-items
+;;  (utils/walk-over-s3 :bcd2 :cessna (t/date-time 2016 2 22)))
 
 ;; @(rewrite-index! "l5")
 ;; @(http/delete (es-url "l5"))

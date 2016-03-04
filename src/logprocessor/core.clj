@@ -26,7 +26,7 @@
          (parse-details subdoc))))))
 
 (defn process-item
-  "item should be dict with name and source"
+  "Item should be dict with name and source"
   [item]
   (try
     (process-file (:source item))

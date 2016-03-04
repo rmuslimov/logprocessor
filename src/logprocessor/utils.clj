@@ -69,6 +69,8 @@
     (fn [it] (cp/pmap core/net-pool #(update % :source (fn [f] (f))) it))
     (partition psize psize nil items))))
 
+;; (walk-over-s3 :bcd2 :cessna (t/date-time 2016 2 22))
+
 ;; Pull all xml for date, run processing on them and count number
 ;; (time (reduce + (map count (process (walk-over-s3 :bcd2 :cessna (t/date-time 2016 2 22))))))
 
@@ -82,7 +84,8 @@
 
 ;; Single thread processing 9.4 sec
 ;; (time (count
-;;        (map core/process-item (process (dev/walk-over-file "examples.zip")))))
+;;        (map core/process-item
+;;          (process (dev/walk-over-file "examples.zip")))))
 
 (defn intensive-processing-items
   "Process files and prepare for ES"

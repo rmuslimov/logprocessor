@@ -1,13 +1,9 @@
 (ns logprocessor.parsers-test
-  (:require [clj-time.core :as t]
-            [clj-xpath.core :as xp]
-            [clojure.data.json :as json]
+  (:require [clj-xpath.core :as xpec]
             [clojure.java.io :as io]
-            [logprocessor
-             [parsers :refer :all]
-             [utils :as utils]]
-            [midje.sweet :refer :all]
-            [user :as dev]))
+            [clojure.string :as string]
+            [logprocessor.parsers :refer :all]
+            [midje.sweet :refer :all]))
 
 (defmacro $>
   "Short macro to load test xml. ($> name <do-whatever>...)."
@@ -29,7 +25,7 @@
   ($> "rsp-error" parse-method-name) => :EndTransactionRS)
 
 (facts "Parsing error info"
-  (xp/xmlnsmap-from-node
+  (xpec/xmlnsmap-from-node
    ($> "rsp-error" extract-body-node)) => (contains {"stl" anything})
 
   ($> "rsp-error" extract-body-node parse-error-info) =>

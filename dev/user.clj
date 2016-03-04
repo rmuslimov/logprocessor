@@ -2,7 +2,6 @@
   (:require [clojure.java.io :as io]
             [clojure.tools.namespace.repl :refer [refresh]]
             [com.stuartsierra.component :as component]
-            [logprocessor.es :as es]
             [org.httpkit.client :as http])
   (:import java.util.zip.ZipFile))
 
