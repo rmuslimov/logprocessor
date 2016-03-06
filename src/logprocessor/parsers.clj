@@ -17,6 +17,13 @@
    (xp/$x:text*
     (format ".//MessageHeader//*[local-name()='%s']/text()" tagname) xmldoc)))
 
+(defn clean-ts
+  "Drop Z if exists in the end."
+  [ts]
+  (if (.endsWith ts "Z")
+    (subs ts 0 (-> ts .length dec))
+    ts))
+
 (defn parse-header-info
   "Get header information for sabre files"
   [xmldoc]
@@ -24,8 +31,9 @@
    :message-id (extract-mh-subtext "MessageId" xmldoc)
    :refto (extract-mh-subtext "RefToMessageId" xmldoc)
    :service (extract-mh-subtext "Action" xmldoc)
-   :timestamp (extract-mh-subtext "Timestamp" xmldoc)
+   :timestamp (clean-ts (extract-mh-subtext "Timestamp" xmldoc))
    :pcc (extract-mh-subtext "CPAId" xmldoc)})
+
 
 (defn parse-error-info
   "Parse error tags if they exist."
@@ -39,6 +47,8 @@
   (xp/with-namespace-context (xp/xmlnsmap-from-node subnode)
     (let [ind (->> subnode (xp/$x:attrs ".//EndTransaction[@Ind]") :Ind)]
       {:Ind (= ind "true")})))
+
+
 
 (defn parse-retrieve-rq
   "Parsing TravelItineraryReadRQ request"

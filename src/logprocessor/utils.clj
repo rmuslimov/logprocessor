@@ -65,18 +65,18 @@
   "Get list of item to process, execute f in :source of each item using th"
   [items]
   (flatten
-   (map
-    (fn [it] (cp/pmap core/net-pool #(update % :source (fn [f] (f))) it))
-    (partition psize psize nil items))))
-
-;; (walk-over-s3 :bcd2 :cessna (t/date-time 2016 2 22))
+   (doall
+    (map
+     (fn [it] (cp/pmap core/net-pool #(update % :source (fn [f] (f))) it))
+     (partition psize psize nil items)))))
 
 ;; Pull all xml for date, run processing on them and count number
 ;; (time (reduce + (map count (process (walk-over-s3 :bcd2 :cessna (t/date-time 2016 2 22))))))
+;; (walk-over-s3 :bcd2 :cessna (t/date-time 2016 2 22))
 
 ;; Parallel version with processing xml: 2.4 sec
 ;; (time
-;;  (take 10
+;;  (doall
 ;;   (cp/pmap
 ;;    core/cpu-pool
 ;;    core/process-item
@@ -90,4 +90,4 @@
 (defn intensive-processing-items
   "Process files and prepare for ES"
   [data]
-  (cp/pmap core/cpu-pool core/process-item (process data)))
+  (cp/upmap core/cpu-pool core/process-item (process data)))

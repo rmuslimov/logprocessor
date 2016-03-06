@@ -1,9 +1,9 @@
 (ns logprocessor.parsers-test
   (:require [clj-xpath.core :as xpec]
             [clojure.java.io :as io]
-            [clojure.string :as string]
             [logprocessor.parsers :refer :all]
-            [midje.sweet :refer :all]))
+            [midje.sweet :refer :all]
+            [clj-time.format :as f]))
 
 (defmacro $>
   "Short macro to load test xml. ($> name <do-whatever>...)."
@@ -21,6 +21,8 @@
    :timestamp "2015-11-12T17:50:27",
    :pcc "0O0G"}
 
+  ($> "rq-ping" parse-header-info) => {}
+
   ;; parse-method-name
   ($> "rsp-error" parse-method-name) => :EndTransactionRS)
 
@@ -37,3 +39,7 @@
 (fact "Parsing retrive PNR request"
   ($> "rq-retrieve" extract-body-node parse-retrieve-rq) => {:id "JIHENT"}
   ($> "rq-retrieve" parse-method-name) => :TravelItineraryReadRQ)
+
+(fact "Test parsing timestamp"
+  (clean-ts "AAAZ") => "AAA"
+  (clean-ts "AA") => "AA")

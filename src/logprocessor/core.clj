@@ -1,10 +1,14 @@
 (ns logprocessor.core
   (:gen-class)
-  (:require [com.climate.claypoole :as cp]
+  (:require [clj-time.format :as f]
+            [com.climate.claypoole :as cp]
             [logprocessor.parsers :as p]))
 
 (def net-pool (cp/threadpool 100))
 (def cpu-pool (cp/threadpool (cp/ncpus)))
+(def sabre-ts (f/formatters :date-hour-minute-second))
+
+(f/show-formatters)
 
 (def
   ^{:doc "Each SOAP may have extension with returns specific information."}
@@ -17,9 +21,11 @@
   [xmldoc]
   (let [subdoc (p/extract-body-node xmldoc)
         errors (p/parse-error-info subdoc)
-        parse-details (details-mapping (p/parse-method-name xmldoc))]
+        parse-details (details-mapping (p/parse-method-name xmldoc))
+        header (p/parse-header-info xmldoc)]
     (merge
-     (p/parse-header-info xmldoc)
+     header
+     {:date (->> header :timestamp (f/parse sabre-ts))}
      (if-not (empty? errors)
        {:errors errors}
        (if parse-details
