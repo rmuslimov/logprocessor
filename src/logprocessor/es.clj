@@ -1,10 +1,12 @@
 (ns logprocessor.es
-  (:require [clj-time.format :as f]
+  (:require [clj-time
+             [core :as t]
+             [format :as f]]
             [clojure
              [set :as set]
              [string :as string]]
             [clojure.data.json :as json]
-            [logprocessor.utils :as utils]
+            [logprocessor.core :as core]
             [org.httpkit.client :as http]))
 
 (def elastic-url "http://lf:9200")
@@ -23,16 +25,16 @@
      :Ind {:type :boolean}
      }}})
 
+(defn es-url
+  "Simple formatting for ES queries."
+  [slug]
+  (format "%s/%s" elastic-url slug))
+
 (defn get-existing-indices
   ""
   []
   (->
    @(http/get (es-url "_aliases")) :body json/read-str keys))
-
-(defn es-url
-  "Simple formatting for ES queries."
-  [slug]
-  (format "%s/%s" elastic-url slug))
 
 (defn create-index!
   "Create index if it doesn't exists."
@@ -103,7 +105,8 @@
 (defn put-documents-to-es-index
   "Put documents to index"
   [docs]
-  (let [data (utils/intensive-processing-items docs)]
+  (let [data (remove :exception (core/intensive-processing-items docs))
+        exceptions (filter :exception (core/intensive-processing-items docs))]
     ;; create documents if required
     (create-required-indices! data)
     {:inserted
@@ -114,10 +117,14 @@
        ;; generate proper ES documents
        iter-es-bulk-documents
        ;; run bulk API inserts
-       (map put-bulk-items!)))}))
-
+       (map put-bulk-items!)))
+     :exceptions exceptions
+     }))
 
 ;; (put-documents-to-es-index (dev/walk-over-file "examples.zip"))
-;; (put-documents-to-es-index
-;;  (utils/walk-over-s3 :bcd2 :fokker (t/date-time 2016 1 1)))
-;; @(http/delete (es-url "titan-2016.2"))
+;; (require '[logprocessor.utils :as utils])
+;; (put-documents-to-es-index (utils/walk-over-s3 :bcd2 :fokker 2016 2))
+;; (time (put-documents-to-es-index vvv))
+;; (def vvv (utils/walk-over-s3 :bcd2 :fokker 2016 2))
+;; (count (doall vvv))
+;; @(http/delete (es-url "titan-2016.3"))

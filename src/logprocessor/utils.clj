@@ -3,15 +3,20 @@
             [amazonica.core :as aws]
             [clj-time.core :as t]
             [clj-yaml.core :as yaml]
-            [clojure.data.json :as json]
-            [clojure.string :as string]
             [com.climate.claypoole :as cp]
-            [fs.core :as fs]
-            [logprocessor.core :as core]
-            [user :as dev]))
+            [fs.core :as fs]))
 
 (def s3-root "lboeing_xml")
 (def psize 100)
+(def net-pool (cp/threadpool 100))
+(def cpu-pool (cp/threadpool (cp/ncpus)))
+
+(defn days-range
+  "Iter over days in particular year's month."
+  [y m]
+  (map #(t/date-time y m (inc %))
+       (range
+        (t/number-of-days-in-the-month y m))))
 
 (defn get-path-by-params
   "Get getgoing styled s3 path for given params"
@@ -42,6 +47,18 @@
             (recur (apply conj items (:object-summaries rsp))
                    (:next-marker rsp))))))))
 
+(defn list-s3-objects-par
+  "Run intensively S3 list-objects function"
+  [level app year month]
+  (let [items (cp/pmap
+               net-pool
+               #(list-s3-objects level app %)
+               (days-range year month))]
+    (loop [pool items acc []]
+      (if (empty? pool)
+        acc
+        (recur (rest pool) (apply conj acc (first pool)))))))
+
 (defn get-s3-object
   ""
   [key]
@@ -50,44 +67,12 @@
 
 (defn walk-over-s3
   "Lasy seq, iterating over s3 file and returning future for loaded s3 file"
-  ([level app date]
+  ([level app year month]
    (walk-over-s3
-    (map :key (list-s3-objects level app date))))
+    (map :key (list-s3-objects-par level app year month))))
   ([entities]
    (lazy-seq
     (let [entry (first entities)
           result {:source (fn [] (get-s3-object entry)) :name entry}]
-      (if (empty? (rest entities))
-        (list result)
+      (if-not (empty? (rest entities))
         (cons result (walk-over-s3 (rest entities))))))))
-
-(defn process
-  "Get list of item to process, execute f in :source of each item using th"
-  [items]
-  (flatten
-   (doall
-    (map
-     (fn [it] (cp/pmap core/net-pool #(update % :source (fn [f] (f))) it))
-     (partition psize psize nil items)))))
-
-;; Pull all xml for date, run processing on them and count number
-;; (time (reduce + (map count (process (walk-over-s3 :bcd2 :cessna (t/date-time 2016 2 22))))))
-;; (walk-over-s3 :bcd2 :cessna (t/date-time 2016 2 22))
-
-;; Parallel version with processing xml: 2.4 sec
-;; (time
-;;  (doall
-;;   (cp/pmap
-;;    core/cpu-pool
-;;    core/process-item
-;;    (process (dev/walk-over-file "examples.zip")))))
-
-;; Single thread processing 9.4 sec
-;; (time (count
-;;        (map core/process-item
-;;          (process (dev/walk-over-file "examples.zip")))))
-
-(defn intensive-processing-items
-  "Process files and prepare for ES"
-  [data]
-  (cp/upmap core/cpu-pool core/process-item (process data)))

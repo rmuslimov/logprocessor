@@ -21,7 +21,13 @@
    :timestamp "2015-11-12T17:50:27",
    :pcc "0O0G"}
 
-  ($> "rq-ping" parse-header-info) => {}
+  ($> "rq-ping" parse-header-info) =>
+  {:message-id "d3fda980-8993-11e5-9fb8-0eebf1123529",
+   :pcc "0O0G",
+   :refto nil,
+   :service "OTA_PingRQ",
+   :session-id "4f7869aa-8940-11e5-9fb8-0eebf1123529",
+   :timestamp "2015-11-12T15:19:31"}
 
   ;; parse-method-name
   ($> "rsp-error" parse-method-name) => :EndTransactionRS)

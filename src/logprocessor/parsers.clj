@@ -31,7 +31,7 @@
    :message-id (extract-mh-subtext "MessageId" xmldoc)
    :refto (extract-mh-subtext "RefToMessageId" xmldoc)
    :service (extract-mh-subtext "Action" xmldoc)
-   :timestamp (clean-ts (extract-mh-subtext "Timestamp" xmldoc))
+   :timestamp (if-let [ts (extract-mh-subtext "Timestamp" xmldoc)] (clean-ts ts))
    :pcc (extract-mh-subtext "CPAId" xmldoc)})
 
 
@@ -47,8 +47,6 @@
   (xp/with-namespace-context (xp/xmlnsmap-from-node subnode)
     (let [ind (->> subnode (xp/$x:attrs ".//EndTransaction[@Ind]") :Ind)]
       {:Ind (= ind "true")})))
-
-
 
 (defn parse-retrieve-rq
   "Parsing TravelItineraryReadRQ request"

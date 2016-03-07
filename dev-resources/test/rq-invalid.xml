@@ -1,0 +1,32 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:eb="http://www.ebxml.org/namespaces/messageHeader" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xsd="http://www.w3.org/1999/XMLSchema" xmlns:ns="http://webservices.sabre.com/sabreXML/2011/10">
+   <SOAP-ENV:Header>
+      <eb:MessageHeader SOAP-ENV:mustUnderstand="1" eb:version="2.0">
+         <eb:From>
+            <eb:PartyId type="urn:x12.org:IO5:01">getgoing.com</eb:PartyId>
+         </eb:From>
+         <eb:To>
+            <eb:PartyId type="urn:x12.org:IO5:01">webservices.sabre.com</eb:PartyId>
+         </eb:To>
+         <eb:CPAId>0O0G</eb:CPAId>
+         <eb:ConversationId>d8da88d4-88bb-11e5-a341-0eebf1123529</eb:ConversationId>
+         <eb:Service eb:type="OTA">TravelItineraryReadLLSRQ</eb:Service>
+         <eb:Action>TravelItineraryReadLLSRQ</eb:Action>
+         <eb:MessageData>
+            <eb:MessageId>8edb358c-88d2-11e5-a341-0eebf1123529</eb:MessageId>
+            <eb:TimestampInvalid>2015-11-11T16:16:02Z</eb:TimestampInvalid>
+            <eb:TimeToLive>2015-11-11T16:16:02Z</eb:TimeToLive>
+         </eb:MessageData>
+      </eb:MessageHeader>
+      <wsse:Security xmlns:wsse="http://schemas.xmlsoap.org/ws/2002/12/secext" xmlns:wsu="http://schemas.xmlsoap.org/ws/2002/12/utility">
+         <wsse:BinarySecurityToken valueType="String" EncodingType="wsse:Base64Binary">Shared/IDL:IceSess\/SessMgr:1\.0.IDL/Common/!ICESMS\/RESH!ICESMSLB\/RES.LB!-3470676864266749131!793303!0</wsse:BinarySecurityToken>
+      </wsse:Security>
+   </SOAP-ENV:Header>
+   <SOAP-ENV:Body>
+     <TravelItineraryReadRQ xmlns="http://webservices.sabre.com/sabreXML/2011/10" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" ReturnHostCommand="false" Version="2.1.0">
+       <MessagingDetails>
+         <Transaction Code="PNR"/>
+       </MessagingDetails>
+       <UniqueID ID="JIHENT"/>
+     </TravelItineraryReadRQ>
+   </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
