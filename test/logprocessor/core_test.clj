@@ -22,6 +22,10 @@
    :timestamp "2015-11-11T16:16:02"
    :date (t/date-time 2015 11 11 16 16 2)}
 
+  (fact "Check having name as field"
+    (process-item {:source (pt/$> "rq-retrieve") :name ..x..})=>
+    (contains {:name ..x..}))
+
   ;; Failing may happen
   (process-item {:source (pt/$> "rq-invalid") :name "x"}) =>
   (contains {:exception anything})

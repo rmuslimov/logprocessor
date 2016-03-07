@@ -1,6 +1,7 @@
 (ns logprocessor.core
   (:gen-class)
   (:require [clj-time.format :as f]
+            [clojure.walk :as walk]
             [com.climate.claypoole :as cp]
             [logprocessor
              [parsers :as p]
@@ -36,7 +37,7 @@
   "Item should be dict with name and source"
   [item]
   (try
-    (process-file (:source item))
+    (-> item :source process-file (assoc :name (:name item)))
     (catch Exception e
       {:exception e
        :filepath (:name item)})))

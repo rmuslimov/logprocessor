@@ -6,8 +6,12 @@
              [set :as set]
              [string :as string]]
             [clojure.data.json :as json]
-            [logprocessor.core :as core]
-            [org.httpkit.client :as http]))
+            [com.climate.claypoole :as cp]
+            [logprocessor
+             [core :as core]
+             [utils :as utils]]
+            [org.httpkit.client :as http]
+            [user :as dev]))
 
 (def elastic-url "http://lf:9200")
 (def es-bulk-size 100)
@@ -19,6 +23,7 @@
     {:id {:type :string :index :not_analyzed}
      :pcc {:type :string :index :not_analyzed}
      :message-id {:type :string :index :not_analyzed}
+     :name {:type :string :index :not_analyzed}
      :service {:type :string :index :not_analyzed}
      :session-id {:type :string :index :not_analyzed}
      :timestamp {:type :date}
@@ -117,11 +122,11 @@
        ;; generate proper ES documents
        iter-es-bulk-documents
        ;; run bulk API inserts
-       (map put-bulk-items!)))
+       (cp/pmap utils/net-pool put-bulk-items!)))
      :exceptions exceptions
      }))
 
-;; (put-documents-to-es-index (dev/walk-over-file "examples.zip"))
+(time (put-documents-to-es-index (dev/walk-over-file "examples.zip")))
 ;; (require '[logprocessor.utils :as utils])
 ;; (put-documents-to-es-index (utils/walk-over-s3 :bcd2 :fokker 2016 2))
 ;; (time (put-documents-to-es-index vvv))
