@@ -28,6 +28,4 @@
   ;; Mocking ES calls
   (provided
     (es/create-index! anything) => nil :times 2
-    (es/get-existing-indices) => [] :times 1
-    )
-  )
+    (es/get-existing-indices) => [] :times 1))

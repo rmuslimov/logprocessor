@@ -28,26 +28,19 @@
 
   ;; Failing may happen
   (process-item {:source (pt/$> "rq-invalid") :name "x"}) =>
-  (contains {:exception anything})
-  )
+  (contains {:exception anything}))
 
-(facts "Check walk-over-file"
+(fact "Check walk-over-file"
   (->
-   (take 2 (dev/walk-over-file "examples.zip"))
+   (take 3 (dev/walk-over-file "examples.zip"))
    core/intensive-processing-items
-   first) => (contains {:date anything}))
+   second) => (contains {:date anything}))
 
-;; (fact :slow "Check walk-over-s3."
-;;   (let [items (utils/walk-over-s3 :bcd1 :fokker 2016 2)]
-;;     (count
-;;      (cp/pmap utils/net-pool
-;;               #(update % :source (fn [c] (c)))
-;;               (take 8 items)))) => 8)
-
-(fact "Check smt"
-  (utils/list-s3-objects-par :bcd1 :fokker 2016 2) =>
-  (repeat 29 {:source 1 :name 1})
-
+(facts "Check list s3 objects..."
+  (utils/list-s3-objects-par :bcd1 :fokker 2016 2) => (repeat 29 {:source 1 :name 1})
   (provided
-    (utils/list-s3-objects anything anything anything) =>
-    [{:source 1 :name 1}]))
+    (utils/list-s3-objects anything anything anything) => [{:source 1 :name 1}])
+
+  (utils/list-s3-objects-par :bcd1 :fokker 2016 2 1) => (list {:source 1 :name 1})
+  (provided
+    (utils/list-s3-objects anything anything anything) => [{:source 1 :name 1}]))

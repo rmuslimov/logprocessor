@@ -1,7 +1,7 @@
 (ns logprocessor.core
   (:gen-class)
   (:require [clj-time.format :as f]
-            [clojure.walk :as walk]
+            [clojure.core.async :as a]
             [com.climate.claypoole :as cp]
             [logprocessor
              [parsers :as p]
@@ -45,15 +45,16 @@
 (defn process
   "Get list of item to process, execute f in :source of each item using th"
   [items]
-  (flatten
-   (doall
-    (map
-     (fn [it] (cp/pmap utils/net-pool #(update % :source (fn [f] (f))) it))
-     (partition utils/psize utils/psize nil items)))))
+  (mapcat
+   identity
+   (for [item (partition utils/psize utils/psize nil items)]
+     (cp/upmap utils/net-pool #(update % :source (fn [f] (f))) item))))
 
 (defn intensive-processing-items
   "Process files and prepare for ES"
-  [data]
+  [chan data]
+  (if-let [count (count data)]
+    (a/>!! chan (format "Intense Received: %s" count)))
   (cp/upmap utils/cpu-pool process-item (process data)))
 
 (defn -main

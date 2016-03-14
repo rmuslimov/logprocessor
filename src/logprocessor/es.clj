@@ -11,7 +11,7 @@
              [core :as core]
              [utils :as utils]]
             [org.httpkit.client :as http]
-            [user :as dev]))
+            [clojure.core.async :as a]))
 
 (def elastic-url "http://lf:9200")
 (def es-bulk-size 100)
@@ -83,7 +83,9 @@
 
 (defn iter-es-bulk-documents
   "Generates seq for ES bulk API, param should lazy-seq"
-  [items]
+  [chan items]
+  (if-let [count (count items)]
+    (a/>!! chan (format "ES Received: %s" count)))
   (->>
    items
    (prepend-each-item-with create-operation-header)
@@ -107,28 +109,43 @@
     (doall (map create-index! to-create))
     to-create))
 
+
 (defn put-documents-to-es-index
   "Put documents to index"
-  [docs]
-  (let [data (remove :exception (core/intensive-processing-items docs))
-        exceptions (filter :exception (core/intensive-processing-items docs))]
-    ;; create documents if required
-    (create-required-indices! data)
-    {:inserted
-     (reduce
-      +
-      (->>
-       data
-       ;; generate proper ES documents
-       iter-es-bulk-documents
-       ;; run bulk API inserts
-       (cp/pmap utils/net-pool put-bulk-items!)))
-     :exceptions exceptions
-     }))
+  [chan docs]
+  (let [pool (core/intensive-processing-items chan docs)]
+    (->>
+     (remove :exception pool)
+     ;; generate proper ES documents
+     (iter-es-bulk-documents chan))))
 
-(time (put-documents-to-es-index (dev/walk-over-file "examples.zip")))
+    ;; {:inserted
+    ;;  (reduce +
+    ;;           ;; run bulk API inserts
+    ;;           ;; (cp/upmap utils/net-pool put-bulk-items!)))
+    ;;  :exceptions (filter :exception pool)
+    ;;  }))
+
+(defn reported-processing
+  ""
+  [docs]
+  (let [chan (a/chan)]
+    ;; catch message from that thread
+    (a/go-loop []
+      (let [message (a/<! chan)]
+        (when message
+          (println message)
+          (recur))))
+    ;; do calc in separate thread.
+    (future
+      (put-documents-to-es-index chan docs)
+      (a/close! chan))
+    ))
+
+;; @(reported-processing (dev/walk-over-file "examples.zip"))
 ;; (require '[logprocessor.utils :as utils])
-;; (put-documents-to-es-index (utils/walk-over-s3 :bcd2 :fokker 2016 2))
+;; (require '[user :as dev])
+;; (time (put-documents-to-es-index (utils/walk-over-s3 :bcd2 :fokker 2016 2)))
 ;; (time (put-documents-to-es-index vvv))
 ;; (def vvv (utils/walk-over-s3 :bcd2 :fokker 2016 2))
 ;; (count (doall vvv))

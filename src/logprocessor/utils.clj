@@ -15,8 +15,8 @@
   "Iter over days in particular year's month."
   [y m]
   (map #(t/date-time y m (inc %))
-       (range
-        (t/number-of-days-in-the-month y m))))
+        (range
+         (t/number-of-days-in-the-month y m))))
 
 (defn get-path-by-params
   "Get getgoing styled s3 path for given params"
@@ -49,11 +49,15 @@
 
 (defn list-s3-objects-par
   "Run intensively S3 list-objects function"
-  [level app year month]
-  (let [items (cp/pmap
-               net-pool
-               #(list-s3-objects level app %)
-               (days-range year month))]
+  [level app year month & [day]]
+  (let [date-range (if day
+                     (list (t/date-time year month day))
+                     (days-range year month))
+        items
+        (cp/pmap
+         net-pool
+         #(list-s3-objects level app %)
+         date-range)]
     (loop [pool items acc []]
       (if (empty? pool)
         acc
@@ -67,9 +71,9 @@
 
 (defn walk-over-s3
   "Lasy seq, iterating over s3 file and returning future for loaded s3 file"
-  ([level app year month]
+  ([level app year month & [day]]
    (walk-over-s3
-    (map :key (list-s3-objects-par level app year month))))
+    (map :key (list-s3-objects-par level app year month day))))
   ([entities]
    (lazy-seq
     (let [entry (first entities)
