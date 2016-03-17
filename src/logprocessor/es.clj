@@ -6,12 +6,8 @@
              [set :as set]
              [string :as string]]
             [clojure.data.json :as json]
-            [com.climate.claypoole :as cp]
-            [logprocessor
-             [core :as core]
-             [utils :as utils]]
-            [org.httpkit.client :as http]
-            [clojure.core.async :as a]))
+            [logprocessor.utils :as utils]
+            [org.httpkit.client :as http]))
 
 (def elastic-url "http://lf:9200")
 (def es-bulk-size 100)
@@ -83,9 +79,7 @@
 
 (defn iter-es-bulk-documents
   "Generates seq for ES bulk API, param should lazy-seq"
-  [chan items]
-  (if-let [count (count items)]
-    (a/>!! chan (format "ES Received: %s" count)))
+  [items]
   (->>
    items
    (prepend-each-item-with create-operation-header)
@@ -110,38 +104,21 @@
     to-create))
 
 
-(defn put-documents-to-es-index
-  "Put documents to index"
-  [chan docs]
-  (let [pool (core/intensive-processing-items chan docs)]
-    (->>
-     (remove :exception pool)
-     ;; generate proper ES documents
-     (iter-es-bulk-documents chan))))
+;; (defn put-documents-to-es-index
+;;   "Put documents to index"
+;;   [docs]
+;;   (let [pool (utils/intensive-processing-items docs)]
+;;     (->>
+;;      (remove :exception pool)
+;;      ;; generate proper ES documents
+;;      (iter-es-bulk-documents))))
 
-    ;; {:inserted
-    ;;  (reduce +
-    ;;           ;; run bulk API inserts
-    ;;           ;; (cp/upmap utils/net-pool put-bulk-items!)))
-    ;;  :exceptions (filter :exception pool)
-    ;;  }))
-
-(defn reported-processing
-  ""
-  [docs]
-  (let [chan (a/chan)]
-    ;; catch message from that thread
-    (a/go-loop []
-      (let [message (a/<! chan)]
-        (when message
-          (println message)
-          (recur))))
-    ;; do calc in separate thread.
-    (future
-      (put-documents-to-es-index chan docs)
-      (a/close! chan))
-    ))
-
+;;     ;; {:inserted
+;;     ;;  (reduce +
+;;     ;;           ;; run bulk API inserts
+;;     ;;           ;; (cp/upmap utils/net-pool put-bulk-items!)))
+;;     ;;  :exceptions (filter :exception pool)
+;;     ;;  }))
 ;; @(reported-processing (dev/walk-over-file "examples.zip"))
 ;; (require '[logprocessor.utils :as utils])
 ;; (require '[user :as dev])

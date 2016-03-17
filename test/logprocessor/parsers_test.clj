@@ -46,6 +46,6 @@
   ($> "rq-retrieve" extract-body-node parse-retrieve-rq) => {:id "JIHENT"}
   ($> "rq-retrieve" parse-method-name) => :TravelItineraryReadRQ)
 
-(fact "Test parsing timestamp"
+(facts "Test parsing timestamp"
   (clean-ts "AAAZ") => "AAA"
   (clean-ts "AA") => "AA")

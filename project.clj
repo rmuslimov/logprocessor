@@ -3,21 +3,21 @@
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
-  :dependencies [[org.clojure/clojure "1.7.0"]
-                 [midje "1.8.3"]
+  :dependencies [[amazonica "0.3.9"]
+                 [clj-time "0.9.0"]
+                 [clj-yaml "0.4.0"]
+                 [clojurewerkz/elastisch "2.2.1"]
+                 [com.climate/claypoole "1.1.2"]
                  [com.github.kyleburton/clj-xpath "1.4.5"]
                  [com.stuartsierra/component "0.3.1"]
-                 [clojurewerkz/elastisch "2.2.1"]
-                 [http-kit "2.1.9"]
-                 [amazonica "0.3.9"]
-                 [clj-yaml "0.4.0"]
                  [fs "1.3.3"]
-                 [clj-time "0.9.0"]
+                 [http-kit "2.1.9"]
                  [joda-time/joda-time "2.9.2"]
-                 [org.clojure/data.json "0.2.6"]
-                 [com.climate/claypoole "1.1.2"]
-                 [org.clojure/core.async "0.2.37"]
-                 [org.clojure/core.async "0.2.374"]]
+                 [manifold "0.1.3-alpha2"]
+                 [midje "1.8.3"]
+                 [org.clojure/clojure "1.7.0"]
+                 [org.clojure/core.async "0.2.374"]
+                 [org.clojure/data.json "0.2.6"]]
   :main ^:skip-aot logprocessor.core
   :target-path "target/%s"
   :profiles {:dev {:source-paths ["dev"]}

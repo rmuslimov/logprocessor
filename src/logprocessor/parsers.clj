@@ -34,7 +34,6 @@
    :timestamp (if-let [ts (extract-mh-subtext "Timestamp" xmldoc)] (clean-ts ts))
    :pcc (extract-mh-subtext "CPAId" xmldoc)})
 
-
 (defn parse-error-info
   "Parse error tags if they exist."
   [subnode]
