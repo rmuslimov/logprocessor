@@ -1,5 +1,16 @@
 (ns logprocessor.parsers
-  (:require [clj-xpath.core :as xp]))
+  (:require [clj-time.format :as f]
+            [clj-xpath.core :as xp]))
+
+(declare parse-et-rq parse-retrieve-rq)
+
+(def sabre-ts (f/formatters :date-hour-minute-second))
+
+(def
+  ^{:doc "Each SOAP may have extension with returns specific information."}
+  details-mapping
+  {:EndTransactionRQ parse-et-rq
+   :TravelItineraryReadRQ parse-retrieve-rq})
 
 (defn parse-method-name
   "Extract node with internal structure"
@@ -53,3 +64,30 @@
   (xp/with-namespace-context (xp/xmlnsmap-from-node subnode)
     (let [id (->> subnode (xp/$x:attrs ".//UniqueID[@ID]") :ID)]
       {:id id})))
+
+(defn process-file
+  "Processing xmldoc return map representing it's structure."
+  [xmldoc]
+  (let [subdoc (extract-body-node xmldoc)
+        errors (parse-error-info subdoc)
+        parse-details (details-mapping (parse-method-name xmldoc))
+        header (parse-header-info xmldoc)
+        date (->> header :timestamp)]
+    (when-not date
+      (throw (Exception. (format "Incorrect date: %s" (->> header :timestamp)))))
+    (merge
+     header
+     {:date (f/parse sabre-ts date)}
+     (if-not (empty? errors)
+       {:errors errors}
+       (if parse-details
+         (parse-details subdoc))))))
+
+(defn process-item
+  "Item should be dict with name and source"
+  [item]
+  (try
+    (process-file (:source item))
+    (catch Exception e
+      {:exception e
+       :filepath (:name item)})))

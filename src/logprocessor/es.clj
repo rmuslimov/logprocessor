@@ -52,7 +52,7 @@
   [items]
   (->
    @(http/put (es-url "_bulk") {:body items})
-  :body json/read-str (get "items") count))
+   :body json/read-str (get "items") count))
 
 (defn prepend-each-item-with
   [prepend-func items]
@@ -104,6 +104,7 @@
     to-create))
 
 
+;; (create-index! "titan-2015.11")
 ;; (defn put-documents-to-es-index
 ;;   "Put documents to index"
 ;;   [docs]
@@ -126,4 +127,4 @@
 ;; (time (put-documents-to-es-index vvv))
 ;; (def vvv (utils/walk-over-s3 :bcd2 :fokker 2016 2))
 ;; (count (doall vvv))
-;; @(http/delete (es-url "titan-2016.3"))
+;; @(http/delete (es-url "titan-2015.11"))

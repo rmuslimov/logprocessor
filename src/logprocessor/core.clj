@@ -1,82 +1,99 @@
 (ns logprocessor.core
   (:gen-class)
   (:require [com.climate.claypoole :as cp]
-            [logprocessor.utils :as utils]
-            [manifold.bus :as mb]
+            [logprocessor.utils :as p]
+            [logprocessor.es :as es]
             [manifold.stream :as ms]
-            [user :as dev]))
+            [user :as dev])
+  (:import java.util.concurrent.TimeUnit))
 
-(def psize 100)
-(def cpool (cp/threadpool (+ 2 (cp/ncpus))))
+(def psize 100) ;; default size
 (def net-pool (cp/threadpool psize))
-(def state (atom (zipmap #{:input :found :dwn :prc :sent} (repeat 0))))
+(def state (atom (zipmap #{:found :dwn :prc :toes :blk} (repeat 0))))
 
-(defn consume-reports
-  "Listen all messages about processing."
-  [bus]
-  (let [events (keys @state)]
-    (doall
-     (for [event events]
-      (let [sub (mb/subscribe bus event)]
-        (ms/consume #(swap! state update event (partial + %)) sub))))))
+(defn inc-rep
+  "Inform state about made changes"
+  [kw c]
+  (swap! state update kw (partial + c)))
 
-(defn build-streams-map
-  "Build proper map of stream for processing"
-  []
-  (let [smap {:input (ms/stream psize)
-              :found (ms/stream psize)
-              :dwn (ms/stream psize)
-              :prc (ms/stream psize)
-              :bus (mb/event-bus)}]
-    (ms/connect-via
-     (:input smap)
-     (fn [m] (swap! state update :found inc) (ms/put! (:found smap) m))
-     (:found smap))
-    (consume-reports (:bus smap))
-    smap))
+(defn do-&-rep
+  "Process items and report about messages were done."
+  [process-fn kw]
+  (fn [items]
+    (inc-rep kw (count items))
+    (process-fn items)))
+
+(defn batch
+  "Batch messages from input."
+  [in & {:keys [size] :or {size psize}}]
+  (let [batch (ms/batch size in)
+        out (ms/stream psize)]
+    (ms/connect-via batch #(do (inc-rep :found (count %)) (ms/put! out %)) out)
+    out))
+
+(defn >go>
+  "Reads an input with raw items and parses to our map."
+  [in process-fn]
+  (let [out (ms/stream psize)
+        cpool (cp/threadpool (+ (cp/ncpus) 2))]
+    (future
+      (loop [items @(ms/take! in)]
+        (if items
+          (do
+            (cp/future cpool (ms/put! out (process-fn items)))
+            (recur @(ms/take! in)))
+          (do
+            (cp/shutdown cpool)
+            (.awaitTermination cpool 1 TimeUnit/MINUTES)
+            (ms/close! out))
+          )))
+    out))
 
 (defn download
-  "Properly download messages from in stream and put to out."
-  [in out bus]
-  (let [chunked (ms/batch psize in)]
-    (loop [items @(ms/take! chunked)]
-      (when items
-        (do
-          (cp/future
-            cpool
-            (let [res (cp/pmap psize #(update % :source (fn [f] (f))) items)]
-              (mb/publish! bus :dwn (count res))
-              @(ms/put-all! out res)))
-          (recur @(ms/take! chunked)))))))
+  [in]
+  (>go> in
+        (do-&-rep
+         (partial cp/pmap net-pool #(update % :source (fn [f] (f)))) :dwn)))
 
 (defn process
-  "Reads an input with raw items and parses to our map."
-  [in out bus]
-  (loop [item @(ms/take! in)]
-    (when item
-      (do
-        (ms/put! out (utils/process-item item))
-        (mb/publish! bus :prc 1)
-        (recur @(ms/take! in))))))
+  [in]
+  (>go>
+   in
+   (do-&-rep (partial map p/process-item) :prc)))
 
-(defn close-all!
-  "Switch off all streams."
-  [smap]
-  (map ms/close! (vals (select-keys smap #{:input :found :dwn :prc})))
-  (map
-   #(let [s (mb/downstream (:bus smap) %)] (when s (map ms/close! s)))
-   (keys @state))
-  true)
+(defn to-es
+  [in]
+  (>go>
+   in
+   (do-&-rep es/iter-es-bulk-documents :toes)))
 
-;; (def smap (build-streams-map))
-;; (def downloader (future (download (:found smap) (:dwn smap) (:bus smap))))
-;; (def processor (future (process (:dwn smap) (:prc smap) (:bus smap))))
+(defn bulk
+  [in]
+  (>go>
+   in
+   (do-&-rep es/put-bulk-items! :blk)))
 
-;; smap state
-;; (def ex (dev/walk-over-file "examples.zip"))
-;; (ms/connect (ms/->source ex) (:input smap))
-;; (ms/close! (:input smap))
-;; (close-all! smap)
-;; (for [s messages] (ms/close! s))
-;; @(mb/publish! (:bus smap) :found 1)
-;; (mb/active? (:bus smap) :found)
+(defn create-system
+  "Create system for processing messages to ES."
+  []
+  (let [in (ms/stream psize)]
+    (list in (-> in batch download process to-es bulk))))
+
+(defn exec!
+  ""
+  [system docs]
+  (if (ms/closed? (first system))
+    (throw (Exception. "System is closed.")))
+
+  (let [[in out] system
+        p (promise)]
+    (ms/connect (ms/->source docs) in)
+    (ms/consume identity out)
+    (ms/on-closed out #(deliver p out))
+    p))
+
+(def docs (dev/walk-over-file "examples.zip"))
+
+;; state
+;; (def system (create-system))
+;; (time @(exec! system docs))
