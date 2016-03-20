@@ -32,8 +32,7 @@
   "Drop Z if exists in the end."
   [ts]
   (if (.endsWith ts "Z")
-    (subs ts 0 (-> ts .length dec))
-    ts))
+    (subs ts 0 (-> ts .length dec)) ts))
 
 (defn parse-header-info
   "Get header information for sabre files"
@@ -89,5 +88,4 @@
   (try
     (process-file (:source item))
     (catch Exception e
-      {:exception e
-       :filepath (:name item)})))
+      {:exception e :filepath (:name item)})))

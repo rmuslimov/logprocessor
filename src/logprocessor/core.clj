@@ -40,7 +40,7 @@
             (recur @(ms/take! in)))
           (do
             (cp/shutdown cpool)
-            (.awaitTermination cpool 1 TimeUnit/MINUTES)
+            (.awaitTermination cpool 10 TimeUnit/SECONDS)
             (ms/close! out)))))
     out))
 

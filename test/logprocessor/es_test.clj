@@ -19,13 +19,3 @@
   (es/iter-es-bulk-documents
    [{:message-id 1 :date (t/date-time 2016 2 2)}]) =>
   (list "{\"index\":{\"_id\":1,\"_type\":\"sabre\",\"_index\":\"titan-2016.2\"}}\n{\"message-id\":1}\n"))
-
-(fact "Check if code creating ES indices properly based on calls list."
-  (es/create-required-indices!
-   [{:date (t/date-time 2016 2 1)}
-    {:date (t/date-time 2016 3 1)}]) => #{"titan-2016.2", "titan-2016.3"}
-
-  ;; Mocking ES calls
-  (provided
-    (es/create-index! anything) => nil :times 2
-    (es/get-existing-indices) => [] :times 1))
