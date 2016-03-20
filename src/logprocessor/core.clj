@@ -1,7 +1,7 @@
 (ns logprocessor.core
   (:gen-class)
   (:require [com.climate.claypoole :as cp]
-            [logprocessor.utils :as p]
+            [logprocessor.utils :as u]
             [logprocessor.es :as es]
             [manifold.deferred :as d]
             [manifold.stream :as ms]
@@ -9,12 +9,15 @@
   (:import java.util.concurrent.TimeUnit))
 
 (def psize 100) ;; default size
-(def state (atom (zipmap #{:found :dwn :prc :toes :blk} (repeat 0))))
+(def state
+  (atom {:busy false
+         :queue (ms/stream 10)
+         :counter (zipmap #{:found :dwn :prc :toes :blk} (repeat 0))}))
 
 (defn inc-rep
   "Inform state about made changes"
   [kw c]
-  (swap! state update kw (partial + c)))
+  (swap! state update-in [:counter kw] (partial + c)))
 
 (defn batch
   "Batch messages from input."
@@ -56,10 +59,9 @@
                 (>go>
                  (partial update-kw-async :source (fn [f] (f)))
                  (partial inc-rep :dwn))
-                (>go> (partial map p/process-item) (partial inc-rep :prc))
+                (>go> (partial map u/process-item) (partial inc-rep :prc))
                 (>go> es/iter-es-bulk-documents (partial inc-rep :toes))
                 (>go> es/put-bulk-items! (partial inc-rep :blk)))]
-    (ms/on-closed out #(cp/shutdown netpool))
     (list in out)))
 
 (defn exec!
@@ -72,10 +74,13 @@
         p (promise)]
     (ms/consume identity out)
     (ms/on-closed out #(deliver p out))
-    (d/chain
-     (ms/put-all! in docs)
-     (fn [_] (ms/close! in)))
+    (ms/connect (ms/->source docs) in)
     p))
 
+(defn add-task-to-queue
+  ""
+  [level app y m & [d]]
+  )
+
 ;; (def docs (dev/walk-over-file "examples.zip"))
-;; (time (do @(exec! (create-system) (mapcat identity (repeat 10 docs))) state))
+;; (time (do @(exec! (create-system) docs) state))

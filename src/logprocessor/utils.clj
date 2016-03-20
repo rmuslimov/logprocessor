@@ -13,7 +13,6 @@
              [stream :as ms]]))
 
 (def s3-root "lboeing_xml")
-(def psize 100)
 (def sabre-ts (f/formatters :date-hour-minute-second))
 
 (def
@@ -61,12 +60,15 @@
    "%s/%s/y=%d/m=%02d/d=%02d/" (name level) (name appname)
    (t/year date) (t/month date) (t/day date)))
 
-(defn get-creds
-  "Return list with access,secret keys from ~/.eagle"
+(defn- load-creds
   []
   (let [{{ac :access_key sc :secret_key} :aws}
         (-> "~/.eagle" fs/expand-home slurp yaml/parse-string)]
     (list ac sc)))
+
+(def get-creds
+  "Return list with access,secret keys from ~/.eagle"
+  (memoize load-creds))
 
 (defn list-s3-objects-for-date
   "Get full list of available xml on s3 for certain date."
@@ -102,12 +104,15 @@
 
 (defn walk-over-s3
   "Lasy seq, iterating over s3 file and returning future for loaded s3 file"
-  ([level app year month & [day]]
+  ([level app y m & [d]]
    (walk-over-s3
-    (map :key (list-s3-objects level app year month day))))
+    (map :key (list-s3-objects level app y m d))))
   ([entities]
    (lazy-seq
     (let [entry (first entities)
           result {:source (fn [] (get-s3-object entry)) :name entry}]
       (if-not (empty? (rest entities))
         (cons result (walk-over-s3 (rest entities))))))))
+
+;; (time (def l (walk-over-s3 :bcd1 :fokker 2016 2)))
+;; (count l)
