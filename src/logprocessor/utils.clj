@@ -7,13 +7,13 @@
             [clj-yaml.core :as yaml]
             [com.climate.claypoole :as cp]
             [fs.core :as fs]
-            [logprocessor.parsers :as p]))
+            [logprocessor.parsers :as p]
+            [manifold
+             [deferred :as d]
+             [stream :as ms]]))
 
 (def s3-root "lboeing_xml")
 (def psize 100)
-(def net-pool (cp/threadpool 100))
-(def cpu-pool (cp/threadpool (cp/ncpus)))
-
 (def sabre-ts (f/formatters :date-hour-minute-second))
 
 (def
@@ -46,22 +46,19 @@
   (try
     (-> item :source process-file (assoc :name (:name item)))
     (catch Exception e
-      {:exception e
-       :filepath (:name item)})))
+      {:exception e :filepath (:name item)})))
 
-(defn days-range
+(defn dates-range
   "Iter over days in particular year's month."
   [y m]
   (map #(t/date-time y m (inc %))
-        (range
-         (t/number-of-days-in-the-month y m))))
+       (range (t/number-of-days-in-the-month y m))))
 
-(defn get-path-by-params
+(defn gen-s3-prefix
   "Get getgoing styled s3 path for given params"
   [level appname date]
   (format
-   "%s/%s/y=%d/m=%02d/d=%02d/"
-   (name level) (name appname)
+   "%s/%s/y=%d/m=%02d/d=%02d/" (name level) (name appname)
    (t/year date) (t/month date) (t/day date)))
 
 (defn get-creds
@@ -71,11 +68,11 @@
         (-> "~/.eagle" fs/expand-home slurp yaml/parse-string)]
     (list ac sc)))
 
-(defn list-s3-objects
-  "Get full list of available xml on s3."
+(defn list-s3-objects-for-date
+  "Get full list of available xml on s3 for certain date."
   [level app date]
   (aws/with-credential (get-creds)
-    (let [prefix (get-path-by-params level app date)]
+    (let [prefix (gen-s3-prefix level app date)]
       (loop [items [] marker nil]
         (let [rsp
               (s3/list-objects
@@ -85,21 +82,17 @@
             (recur (apply conj items (:object-summaries rsp))
                    (:next-marker rsp))))))))
 
-(defn list-s3-objects-par
-  "Run intensively S3 list-objects function"
-  [level app year month & [day]]
-  (let [date-range (if day
-                     (list (t/date-time year month day))
-                     (days-range year month))
-        items
-        (cp/pmap
-         net-pool
-         #(list-s3-objects level app %)
-         date-range)]
-    (loop [pool items acc []]
-      (if (empty? pool)
-        acc
-        (recur (rest pool) (apply conj acc (first pool)))))))
+(defn list-s3-objects
+  "Get lazy-seq over all files stored with given prefix."
+  [level app y m & [d]]
+  (let [dates (if d (list (t/date-time y m d)) (dates-range y m))]
+    @(d/chain
+      (apply
+       d/zip
+       (map #(d/future (list-s3-objects-for-date level app %)) dates))
+      (partial mapcat identity))))
+
+;; (count (list-s3-objects :bcd1 :cessna 2016 2))
 
 (defn get-s3-object
   ""
@@ -111,7 +104,7 @@
   "Lasy seq, iterating over s3 file and returning future for loaded s3 file"
   ([level app year month & [day]]
    (walk-over-s3
-    (map :key (list-s3-objects-par level app year month day))))
+    (map :key (list-s3-objects level app year month day))))
   ([entities]
    (lazy-seq
     (let [entry (first entities)

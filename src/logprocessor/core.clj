@@ -44,15 +44,17 @@
             (ms/close! out)))))
     out))
 
+(defn- update-kw-async [kw fn pool]
+  @(apply d/zip (map #(d/future (update % kw fn)) pool)))
+
 (defn create-system
   "Create system for processing messages to ES."
   []
   (let [in (ms/stream psize)
-        netpool (cp/threadpool psize)
         out (-> in
                 batch
                 (>go>
-                 (partial cp/pmap netpool #(update % :source (fn [f] (f))))
+                 (partial update-kw-async :source (fn [f] (f)))
                  (partial inc-rep :dwn))
                 (>go> (partial map p/process-item) (partial inc-rep :prc))
                 (>go> es/iter-es-bulk-documents (partial inc-rep :toes))
@@ -76,4 +78,4 @@
     p))
 
 ;; (def docs (dev/walk-over-file "examples.zip"))
-;; (time (do @(exec! (create-system) docs) state))
+;; (time (do @(exec! (create-system) (mapcat identity (repeat 10 docs))) state))

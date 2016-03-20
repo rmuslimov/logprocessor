@@ -39,10 +39,10 @@
   ($> "rsp-error" extract-body-node parse-error-info) =>
   '("PREVIOUS ENTRY IN PROGRESS, PLEASE WAIT"))
 
-(facts "Parsing SABRE trivial methods"
+(facts "Parsing sabre trivial methods"
   ($> "rq-et" extract-body-node parse-et-rq) => {:Ind true})
 
-(fact "Parsing retrive PNR request"
+(facts "Parsing retrieve PNR request"
   ($> "rq-retrieve" extract-body-node parse-retrieve-rq) => {:id "JIHENT"}
   ($> "rq-retrieve" parse-method-name) => :TravelItineraryReadRQ)
 
