@@ -21,6 +21,15 @@
   {:EndTransactionRQ p/parse-et-rq
    :TravelItineraryReadRQ p/parse-retrieve-rq})
 
+(defn- load-creds []
+  (let [{{ac :access_key sc :secret_key} :aws}
+        (-> "~/.eagle" fs/expand-home slurp yaml/parse-string)]
+    (list ac sc)))
+
+(def get-creds
+  "Return list with access,secret keys from ~/.eagle"
+  (memoize load-creds))
+
 (defn process-file
   "Processing xmldoc return map representing it's structure."
   [xmldoc]
@@ -57,18 +66,7 @@
   "Get getgoing styled s3 path for given params"
   [level appname date]
   (format
-   "%s/%s/y=%d/m=%02d/d=%02d/" (name level) (name appname)
-   (t/year date) (t/month date) (t/day date)))
-
-(defn- load-creds
-  []
-  (let [{{ac :access_key sc :secret_key} :aws}
-        (-> "~/.eagle" fs/expand-home slurp yaml/parse-string)]
-    (list ac sc)))
-
-(def get-creds
-  "Return list with access,secret keys from ~/.eagle"
-  (memoize load-creds))
+   "%s/%s/y=%d/m=%02d/d=%02d/" (name level) (name appname) (t/year date) (t/month date) (t/day date)))
 
 (defn list-s3-objects-for-date
   "Get full list of available xml on s3 for certain date."

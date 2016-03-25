@@ -3,6 +3,10 @@
             [logprocessor.es :as es]
             [midje.sweet :refer :all]))
 
+(fact
+  (es/create-operation-header {:date (t/date-time 2016 2 2)}) =>
+  {:index {:_id nil, :_type "sabre", :_index "titan-2016.2"}})
+
 (fact "Check prepend documents with operational json"
   (es/prepend-each-item-with #(inc %) (range 3)) => [1 0 2 1 3 2])
 
