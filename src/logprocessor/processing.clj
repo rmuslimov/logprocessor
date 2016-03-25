@@ -3,7 +3,7 @@
             [com.stuartsierra.component :as component]
             [logprocessor
              [es :as es]
-             [utils :as utils]]
+             [utils :as u]]
             [manifold
              [deferred :as d]
              [stream :as ms]])

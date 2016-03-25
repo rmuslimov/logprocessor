@@ -16,8 +16,13 @@
                  [manifold "0.1.3-alpha2"]
                  [midje "1.8.3"]
                  [org.clojure/clojure "1.7.0"]
+                 [org.clojure/clojurescript "1.7.228"]
                  [org.clojure/core.async "0.2.374"]
-                 [org.clojure/data.json "0.2.6"]]
+                 [org.clojure/data.json "0.2.6"]
+                 [com.cemerick/piggieback "0.2.1"]
+                 [figwheel-sidecar "0.5.2-SNAPSHOT"]
+                 [reagent "0.5.1"]]
+  :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
   :main ^:skip-aot logprocessor.core
   :target-path "target/%s"
   :profiles {:dev {:source-paths ["dev"]}
