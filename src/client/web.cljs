@@ -14,4 +14,4 @@
                           (. js/document (getElementById "app")))
 
 ;; change state example (do C-x C-e here, see browser)
-;; (swap! app-state assoc :text "Hello world!!!")
+;; (swap! app-state assoc :text "Hellow world!!!")

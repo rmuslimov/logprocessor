@@ -1,4 +1,4 @@
-(ns logprocessor.web
+(ns devweb
   (:require [figwheel-sidecar.repl-api :as ra]))
 
 (defn start []

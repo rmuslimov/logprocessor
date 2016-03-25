@@ -1,18 +1,18 @@
 #+TITLE: BCD Travel S3 log parser
 
 * Short intro
-** Starting REPL
 
-#+begin_src bash
-$ lein repl
-#+end_src
+** Run cljs repl (emacs tutorial)
+- Start common repl (C-c M-j)
+- Open in file dev/devweb.clj
+- Eval buffer (C-c C-k)
+- Set namespace to repl (C-C M-n)
+- call in repl: `(start)`
+- switch to cljs repl: `(repl)`
+- open `resources/public/index.html` as file in browser
 
-** Reset application state
-
-#+begin_src clojure
-(use '(user))
-(user/reset)
-#+end_src
+Now you're in cljs world, you can start changing `client/web.cljs` hot-reload and
+acces to web-browser should work from REPL.
 
 ** Run autotest tool
 
