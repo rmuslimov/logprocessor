@@ -11,18 +11,13 @@
 
 (def psize 100) ;; default size
 
-(defn inc-rep
-  "Inform state about made changes"
-  [stream kw c]
-  (ms/put! stream {:step kw :inc c}))
-
 (defn batch
   "Batch messages from input."
   [in report]
   (let [batch (ms/batch psize in)
         out (ms/stream psize)]
     (ms/connect-via
-     batch #(do (inc-rep :found (count %)) (ms/put! out %)) out)
+     batch #(do (u/msg! report :found (count %)) (ms/put! out %)) out)
     out))
 
 (defn >go>
@@ -47,7 +42,7 @@
 (defn- update-kw-async [kw fn pool]
   @(apply d/zip (map #(d/future (update % kw fn)) pool)))
 
-(defn create-system
+(defn create-streams
   "Create system for processing messages to ES."
   [report]
   (let [in (ms/stream psize)
@@ -55,33 +50,30 @@
                 (batch report)
                 (>go>
                  (partial update-kw-async :source (fn [f] (f)))
-                 (partial inc-rep report :dwn))
-                (>go> (partial map u/process-item) (partial inc-rep report :prc))
-                (>go> es/iter-es-bulk-documents (partial inc-rep report :toes))
-                (>go> es/put-bulk-items! (partial inc-rep report :blk)))]
-    (list in out report)))
+                 (partial u/msg! report :dwn))
+                (>go> (partial map u/process-item) (partial u/msg! report :prc))
+                (>go> es/iter-es-bulk-documents (partial u/msg! report :toes))
+                (>go> es/put-bulk-items! (partial u/msg! report :blk)))]
+    (list in out)))
 
 (defn load-documents!
   "Execute loading using system and docs lazy sequence."
   [docs report]
-  (let [[in out] (create-system report)
+  (let [[in out] (create-streams report)
         p (promise)]
     (ms/consume identity out)
     (ms/on-closed out #(deliver p out))
     (ms/connect (ms/->source docs) in)
     p))
 
-(defn consume-tasks
-  [report [level app y m & d]]
-  @(es/create-indices y m)
-  (load-documents! (utils/walk-over-s3 level app y m d) report))
-
-(defrecord ESLoading [tasks-queue]
+(defrecord ESLoading [queue report]
   component/Lifecycle
   (start [self]
-    (let [report (ms/stream 1e5)]
-      (ms/consume (partial consume-tasks report) tasks-queue)
-      (assoc self :report report)))
+    (let [s (ms/stream)]
+      (ms/connect (:queue self) s)
+      (ms/consume #(load-documents! % (:report self)) s)
+      (assoc self :listener s)))
 
   (stop [self]
-    (ms/close! (:report self))))
+    (ms/close! (:listener self))
+    (dissoc self :listener)))

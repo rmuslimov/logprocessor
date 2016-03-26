@@ -1,11 +1,10 @@
 (ns logprocessor.es
-  (:require [clj-time
-             [core :as t]
-             [format :as f]]
+  (:require [clj-time.format :as f]
             [clojure
              [set :as set]
              [string :as string]]
             [clojure.data.json :as json]
+            [logprocessor.utils :as u]
             [manifold.deferred :as d]
             [org.httpkit.client :as http]))
 
@@ -52,15 +51,16 @@
   (http/put (es-url name) {:body (json/write-str es-index-conf)}))
 
 (defn create-indices
-  [y m & {:keys [rewrite] :or {:rewrite false}}]
+  [y m & {:keys [rewrite report] :or {:rewrite false}}]
   (let [names (set (get-indices-names y m))
         existing (set @(get-existing-indices))
         indices (set/difference names existing)]
+    (when report
+      (u/msg! report :message
+              (str "Indices to create: " (string/join ", " indices))))
     (when rewrite
       @(apply d/zip (map #(http/delete (es-url %)) indices)))
     (apply d/zip (map create-index! indices))))
-
-;; (time @(create-indices 2015 10))
 
 (defn put-bulk-items!
   "Use bulk api for putting many items. Return items inserted."

@@ -5,7 +5,6 @@
              [core :as t]
              [format :as f]]
             [clj-yaml.core :as yaml]
-            [com.climate.claypoole :as cp]
             [fs.core :as fs]
             [logprocessor.parsers :as p]
             [manifold
@@ -92,7 +91,10 @@
        (map #(d/future (list-s3-objects-for-date level app %)) dates))
       (partial mapcat identity))))
 
-;; (count (list-s3-objects :bcd1 :cessna 2016 2))
+(defn msg!
+  "Inform state about made changes"
+  [stream kw m]
+  (ms/put! stream {:key kw :message m}))
 
 (defn get-s3-object
   ""
