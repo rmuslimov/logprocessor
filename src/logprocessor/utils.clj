@@ -50,10 +50,11 @@
 (defn process-item
   "Item should be dict with name and source"
   [item]
-  (try
-    (-> item :source process-file (assoc :name (:name item)))
-    (catch Exception e
-      {:exception e :filepath (:name item)})))
+  (-> item :source process-file (assoc :name (:name item))))
+  ;; (try
+  ;;   (-> item :source process-file (assoc :name (:name item)))
+  ;;   (catch Exception e
+  ;;     {:exception e :filepath (:name item)})))
 
 (defn dates-range
   "Iter over days in particular year's month."
@@ -93,8 +94,8 @@
 
 (defn msg!
   "Inform state about made changes"
-  [stream kw m]
-  (ms/put! stream {:key kw :message m}))
+  [stream uid kw m]
+  (ms/put! stream {:uid uid :key kw :message m}))
 
 (defn get-s3-object
   ""
@@ -114,5 +115,4 @@
       (if-not (empty? (rest entities))
         (cons result (walk-over-s3 (rest entities))))))))
 
-;; (time (def l (walk-over-s3 :bcd1 :fokker 2016 2)))
-;; (count l)
+(defn uuid [] (str (java.util.UUID/randomUUID)))

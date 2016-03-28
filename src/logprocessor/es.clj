@@ -51,13 +51,10 @@
   (http/put (es-url name) {:body (json/write-str es-index-conf)}))
 
 (defn create-indices
-  [y m & {:keys [rewrite report] :or {:rewrite false}}]
+  [y m & {:keys [rewrite] :or {:rewrite false}}]
   (let [names (set (get-indices-names y m))
         existing (set @(get-existing-indices))
         indices (set/difference names existing)]
-    (when report
-      (u/msg! report :message
-              (str "Indices to create: " (string/join ", " indices))))
     (when rewrite
       @(apply d/zip (map #(http/delete (es-url %)) indices)))
     (apply d/zip (map create-index! indices))))
@@ -67,7 +64,7 @@
   [items]
   (d/chain
    (http/put (es-url "_bulk") {:body items}) :body
-   json/read-str #(get % "items") count))
+   json/read-str #(get % "items")))
 
 (defn prepend-each-item-with
   [prepend-func items]
@@ -95,5 +92,6 @@
    (map json/write-str)
    (partition-all es-bulk-size)
    (map #(str (string/join "\n" %) "\n"))))
+   ;; #(str (string/join "\n" %) "\n")))
 
 ;; (create-index! "titan-2015.11")

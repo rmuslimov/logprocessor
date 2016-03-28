@@ -21,7 +21,8 @@
                  [org.clojure/data.json "0.2.6"]
                  [com.cemerick/piggieback "0.2.1"]
                  [figwheel-sidecar "0.5.2-SNAPSHOT"]
-                 [reagent "0.5.1"]]
+                 [reagent "0.5.1"]
+                 [clj-uuid "1.0.0"]]
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
   :main ^:skip-aot logprocessor.core
   :target-path "target/%s"
