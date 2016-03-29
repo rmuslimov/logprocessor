@@ -47,14 +47,17 @@
        (if parse-details
          (parse-details subdoc))))))
 
-(defn process-item
-  "Item should be dict with name and source"
-  [item]
-  (-> item :source process-file (assoc :name (:name item))))
-  ;; (try
-  ;;   (-> item :source process-file (assoc :name (:name item)))
-  ;;   (catch Exception e
-  ;;     {:exception e :filepath (:name item)})))
+(defn process-items
+  "Process list of items in pool, throw exc if occur."
+  [pool msg!]
+  (for [item pool]
+    (let [{name :name} item]
+      (try
+        (-> item :source process-file (assoc :name name))
+        (catch Exception e
+          (do
+            (msg! :exc {:type :process-items :name name :err (str e)})
+            {:exception e :name name}))))))
 
 (defn dates-range
   "Iter over days in particular year's month."
@@ -116,3 +119,7 @@
         (cons result (walk-over-s3 (rest entities))))))))
 
 (defn uuid [] (str (java.util.UUID/randomUUID)))
+
+(defn wrap-exc
+  [fn]
+  #(try (fn) (catch Exception e (prn e))))

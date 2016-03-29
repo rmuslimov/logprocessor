@@ -62,9 +62,9 @@
 (defn put-bulk-items!
   "Use bulk api for putting many items. Return items inserted."
   [items]
-  (d/chain
-   (http/put (es-url "_bulk") {:body items}) :body
-   json/read-str #(get % "items")))
+  @(d/chain
+    (http/put (es-url "_bulk") {:body items}) :body
+    json/read-str #(get % "items")))
 
 (defn prepend-each-item-with
   [prepend-func items]
@@ -85,13 +85,11 @@
 (defn iter-es-bulk-documents
   "Generates seq for ES bulk API, param should lazy-seq"
   [items]
-  (->>
-   items
-   (prepend-each-item-with create-operation-header)
-   (map #(dissoc % :date))
-   (map json/write-str)
-   (partition-all es-bulk-size)
-   (map #(str (string/join "\n" %) "\n"))))
-   ;; #(str (string/join "\n" %) "\n")))
+  (str (->>
+        items
+        (prepend-each-item-with create-operation-header)
+        (map #(dissoc % :date))
+        (map json/write-str)
+        (string/join "\n")) "\n"))
 
 ;; (create-index! "titan-2015.11")
