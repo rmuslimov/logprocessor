@@ -19,17 +19,13 @@
   "Reading stream for reports."
   [report]
   (ms/consume
-   (fn [{key :key m :message uid :uid}]
-     (if (steps key)
-       (swap! state update-in [:counters uid key] (partial + m))
-       (println m)))
-   report))
-
-;; (defn create-system
-;;   ""
-;;   []
-;;   (cmp/system-map
-;;    :loader (prc/map->ESLoading (select-keys @state [:queue :report]))))
+   prn report)
+   ;; (fn [{key :key m :message uid :uid}]
+   ;;   (prn key m uid)
+   ;;   (if (steps key)
+   ;;     (swap! state update-in [:counters uid key] (partial + m))
+   ;;     (println m)))
+   report)
 
 (defn add-task
   "Add task to calculation queue, return uid."
@@ -44,33 +40,13 @@
   ""
   [])
 
-;; (def a (ms/stream 10))
-;; (ms/put! a 1)
-;; (def b (ms/stream 10))
-;; (def e (ms/stream 10))
 
-;; (ms/consume prn e)
-
-;; (ms/consume-async
-;;  (fn [x] (d/catch (d/future (/ 1 x)) #(ms/put! e %)))
-;;  b)
-;; (ms/put! b 0)
-
-;; (swap! state update :found inc)
-;; @(es/create-indices y m :report report)
-
-
-;; (ms/downstream (:queue @state))
-;; (def ccc (ms/stream 10))
-;; (ms/connect (:queue @state) ccc)
+(def docs (dev/walk-over-file "examples.zip"))
 ;; (ms/close! ccc)
 ;; state
 ;; (read-reports (:report @state))
-;; (def system (create-system))
-;; (alter-var-root #'system cmp/start)
-;; (alter-var-root #'system cmp/stop)
+;; (def strs (prc/create-streams (:report @state) "asdsad"))
+;; (ms/consume identity (second strs))
+;; (ms/connect (ms/->source (take 10 docs)) (first strs))
+
 ;; system
-;; (ms/put! (:queue @state) (dev/walk-over-file "examples.zip"))
-;; (ms/put! (:queue @state) (u/walk-over-s3 :bcd1 :fokker 2016 2 1))
-;; (prc/load-documents! (dev/walk-over-file "examples.zip") (:report @state) "as333")
-;; (add-task (take 5 (dev/walk-over-file "examples.zip")))
