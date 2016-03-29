@@ -5,11 +5,13 @@
              [core :as t]
              [format :as f]]
             [clj-yaml.core :as yaml]
+            [clojure.java.io :as io]
             [fs.core :as fs]
             [logprocessor.parsers :as p]
             [manifold
              [deferred :as d]
-             [stream :as ms]]))
+             [stream :as ms]])
+  (:import java.util.zip.ZipFile))
 
 (def s3-root "lboeing_xml")
 (def sabre-ts (f/formatters :date-hour-minute-second))
@@ -123,3 +125,22 @@
 (defn wrap-exc
   [fn]
   #(try (fn) (catch Exception e (prn e))))
+
+(defn walk-over-file
+  "Iter over files in zip"
+  ([filename]
+   (let
+       [zipfile (-> filename io/resource io/file ZipFile.)
+        entries
+        (remove #(or (.isDirectory %) (-> % .getName (.endsWith "~")))
+        (enumeration-seq (.entries zipfile)))]
+     (walk-over-file zipfile entries)))
+  ([zipfile entries]
+   (lazy-seq
+    (let [entry (first entries)
+          result {:source (fn [] (do (->> entry (.getInputStream zipfile) slurp)))
+                  :name (.getName entry)}]
+      (if (empty? (rest entries))
+        (list result)
+        (cons result
+              (walk-over-file zipfile (rest entries))))))))

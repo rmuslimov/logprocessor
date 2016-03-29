@@ -3,15 +3,18 @@
 
 (enable-console-print!)
 
-(println "Privet Nikita!")
+(println "Let's rock!")
 
-(defonce app-state (atom {:text "Hello world!"}))
+(defonce app-state (atom {:text "Hello app!"}))
 
 (defn hello-world []
-  [:h1 (:text @app-state)])
+  [:div
+   [:h1 (:text @app-state)]
+   [:h2 "here test"]])
 
 (reagent/render-component [hello-world]
                           (. js/document (getElementById "app")))
 
+;; @app-state
 ;; change state example (do C-x C-e here, see browser)
 ;; (swap! app-state assoc :text "Hellow world!!!")

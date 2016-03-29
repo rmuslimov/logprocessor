@@ -6,8 +6,7 @@
              [utils :as u]]
             [manifold
              [deferred :as d]
-             [stream :as ms]]
-            [user :as dev]))
+             [stream :as ms]]))
 
 (def psize 100)             ;; default size
 (def rp (ms/stream 1e3))    ;; reporting stream
@@ -19,7 +18,6 @@
   [uid kw & [body]]
   (ms/put! rp (merge {:uid uid :kw kw} (or body {}))))
 
-;; test consumer, println all logs here
 (defn state-consume
   [{uid :uid kw :kw, :as v}]
   (case kw
@@ -41,9 +39,11 @@
       (println (format "Finished task: %s." uid)))
     (prn v)))
 
+;; Catch events coming from processing
 (ms/consume #(u/wrap-exc (state-consume %)) rp)
 
 (defn- update-kw-async [kw fn pool]
+  "Downloading xmls in async mode."
   @(apply d/zip (map #(d/future (update % kw fn)) pool)))
 
 (defn load-items
@@ -51,7 +51,6 @@
   (update-kw-async :source (fn [x] (x)) pool))
 
 (defn process-chunk
-  "Process certain chunk of data"
   [pool msg!]
   (-> pool
       load-items
@@ -84,8 +83,8 @@
       (msg! :finished {:time (t/now)}))
     uid))
 
-;; (def docs (dev/walk-over-file "examples.zip"))
-;; (def b1 (dev/walk-over-file "broken.zip"))
+;; (def docs (u/walk-over-file "examples.zip"))
+;; (def b1 (u/walk-over-file "broken.zip"))
 ;; (def real (u/walk-over-s3 :bcd1 :fokker 2016 2 1))
 ;; (process (take 1 docs) msg! :description "sdadssd")
 ;; (process b1 msg! :description "broken")
