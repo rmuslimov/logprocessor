@@ -1,12 +1,12 @@
 (ns logprocessor.core
   (:gen-class)
-  (:require [clojure.data.json :as json]
-            [com.stuartsierra.component :as cmp]
+  (:require [com.stuartsierra.component :as cmp]
             [compojure
              [core :refer [ANY defroutes]]
              [route :as route]]
             [liberator.core :refer [defresource]]
             [logprocessor
+             [es :as es]
              [processing :as p]
              [utils :as u]]
             [ring.middleware.params :refer [wrap-params]]
@@ -15,42 +15,43 @@
 (def allowed-levels #{"bcd1" "bcd2" "stage" "dev" "release"})
 (def allowed-apps #{"fokker" "cessna"})
 
-(defn add-task
-  "Add task."
-  [{{sp :params} :request}]
-  (let [params (u/kws-map keyword sp)]
-    (println params)))
-
 (defresource tasks
   :available-media-types ["application/json"]
   :allowed-methods [:get :put]
   :malformed?
-  (fn [{{{:strs [level app y m & d] :as all} :params m :method} :request}]
-    (if (= m "PUT")
+  (fn [{{{:strs [level app year month & day]} :params
+         method :request-method} :request :as all}]
+    (if (not= method :get)
       (cond
-        (->> (list level app y m) (filter nil?) empty? not)
-        {:message "Keys are wrong or incorrect.\n"}
+        (->> (list level app year month) (filter nil?) empty? not)
+        {:message "Keys are wrong or incorrect."}
         (not (contains? allowed-levels level))
-        {:message (format "Wrong level: %s.\n" level)}
+        {:message (format "Wrong level: %s." level)}
         (not (contains? allowed-apps app))
-        {:message (format "Wrong app: %s.\n" app)}
+        {:message (format "Wrong app: %s." app)}
         :else false)
       false))
-  :handle-ok (fn [v] (json/write-str @p/state))
+  :handle-ok (fn [v] @p/state)
   :put!
-  (fn [{{{:strs [level app y m & d] :as all} :params} :request}]
-    {:message
-     (p/process
-      (u/walk-over-s3
-       (keyword level) (keyword app)
-       (Integer. y) (Integer. m) (when d (Integer. d))) p/msg!)}))
+  (fn [{{{:strs [level app year month & day] :as all} :params} :request}]
+    ;; create indices first
+    (let [y (Integer. year) m (Integer. month)
+          created (es/create-indices y m)]
+      (when (some? created)
+        (apply println "Indices created:" created))
 
+      ;; processing
+      {:message
+       {:task-id
+        (p/process
+         (u/walk-over-s3
+          (keyword level) (keyword app)
+          y m (if day (Integer. day) nil)) p/msg!)}})))
 
 (defroutes app
   (ANY "/" [] tasks)
   (route/resources "/")
   (route/not-found "<h2>Page not found.</h2>"))
-
 
 (defn main-system []
   (cmp/system-map
@@ -59,7 +60,5 @@
 (defn -main
   ""
   []
-  (alter-var-root #'main-system cmp/start)
+  (cmp/start (main-system))
   (println "Started."))
-
-;; (set/difference (set (keys {:k 1})) #{2})

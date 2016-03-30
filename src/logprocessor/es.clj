@@ -57,7 +57,7 @@
         indices (set/difference names existing)]
     (when rewrite
       @(apply d/zip (map #(http/delete (es-url %)) indices)))
-    (apply d/zip (map create-index! indices))))
+    @(apply d/zip (map create-index! indices))))
 
 (defn put-bulk-items!
   "Use bulk api for putting many items. Return items inserted."

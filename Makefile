@@ -1,5 +1,3 @@
-.PHONY: autotest
+.PHONY: addtask
 
-
-autotest:
-	lein midje :autotest :filter -slow
+addtask:

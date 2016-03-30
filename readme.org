@@ -14,10 +14,14 @@
 Now you're in cljs world, you can start changing `client/web.cljs` hot-reload and
 acces to web-browser should work from REPL.
 
-** Run autotest tool
+** Build
 
-#+begin_src bash
-$ lein midje :autotest
-#+end_src
+$ lein uberjar
 
-P.S. Any problems - text to Rustem
+** Run some calculations
+
+$ python cli/lp-cli.py localhost:7800 bcd2 fokker 2016 2 2
+
+** View status
+
+Open browser at http://localhost:7800
