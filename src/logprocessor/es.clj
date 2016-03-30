@@ -24,8 +24,7 @@
        :service {:type :string :index :not_analyzed}
        :session-id {:type :string :index :not_analyzed}
        :timestamp {:type :date}
-       :Ind {:type :boolean}
-       }}}})
+       :Ind {:type :boolean}}}}})
 
 (defn es-url
   [slug]

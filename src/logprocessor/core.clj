@@ -13,7 +13,7 @@
             [system.components.http-kit :refer [new-web-server]]))
 
 (def allowed-levels #{"bcd1" "bcd2" "stage" "dev" "release"})
-(def allowed-apps #{"fokker" "cessna"})
+(def allowed-apps #{"fokker"})
 
 (defresource tasks
   :available-media-types ["application/json"]
@@ -34,19 +34,14 @@
   :handle-ok (fn [v] @p/state)
   :put!
   (fn [{{{:strs [level app year month & day] :as all} :params} :request}]
-    ;; create indices first
-    (let [y (Integer. year) m (Integer. month)
+    (let [level (keyword level) app (keyword app)
+          y (Integer. year) m (Integer. month) d (if day (Integer. day) nil)
           created (es/create-indices y m)]
-      (when (some? created)
+      (when (some? created) ;; create indices first
         (apply println "Indices created:" created))
 
-      ;; processing
-      {:message
-       {:task-id
-        (p/process
-         (u/walk-over-s3
-          (keyword level) (keyword app)
-          y m (if day (Integer. day) nil)) p/msg!)}})))
+      (let [r (p/process (u/walk-over-s3 level app y m d) p/msg!)]
+        {:message {:task-id r}}))))
 
 (defroutes app
   (ANY "/" [] tasks)
