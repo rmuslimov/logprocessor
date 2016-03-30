@@ -4,7 +4,6 @@
 
 (enable-console-print!)
 
-
 (reagent/render-component
  [search-page]
  (. js/document (getElementById "app")))
