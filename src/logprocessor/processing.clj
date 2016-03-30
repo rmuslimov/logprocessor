@@ -23,10 +23,9 @@
   (case kw
     :started
     (do
-      (swap! state assoc :busy (:promise v))
-      (swap! state assoc-in [:tasks uid :times] (:time v))
-      (swap! state assoc-in [:tasks uid :size] (:size v))
-      (swap! state assoc-in [:tasks uid :processed] 0)
+      (swap! state assoc :busy uid)
+      (swap! state assoc-in [:tasks uid]
+             {:times (:time v) :size (:size v) :processed 0})
       (if-let [d (:description v)]
         (swap! state assoc-in [:tasks uid :description] d))
       (println (format "Started task (%s): %s." (:description v) uid)))
