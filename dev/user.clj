@@ -16,7 +16,7 @@
 (defn stop-system []
   (reloaded.repl/suspend))
 
-;; (init) (go)
+;; (init) (go) (stop)
 
 ;; cljs configuration management
 ;; Tip for Emacsers!

@@ -25,7 +25,7 @@
     (do
       (swap! state assoc :busy uid)
       (swap! state assoc-in [:tasks uid]
-             {:times (:time v) :size (:size v) :processed 0})
+             {:size (:size v) :processed 0})
       (if-let [d (:description v)]
         (swap! state assoc-in [:tasks uid :description] d))
       (println (format "Started task (%s): %s." (:description v) uid)))
@@ -34,7 +34,8 @@
       (swap! state update-in [:tasks uid :processed] (partial + (:msg v))))
     :finished
     (do
-      (swap! state assoc-in [:tasks uid :timef] (:time v))
+      ;; (swap! state assoc-in [:tasks uid :timef] (:time v))
+      (swap! state assoc :busy nil)
       (println (format "Finished task: %s." uid)))
     (prn v)))
 
@@ -64,22 +65,23 @@
   (let [uid (subs (u/uuid) 0 7)
         msg! (partial msg! uid)
         fp (promise)]
-    (cp/with-shutdown! [cpool (cp/threadpool (+ (cp/ncpus) 2))]
-      (msg! :started
-            {:size (count pool) :time (t/now)
-             :description description :promise fp})
-      (let [futures
-            (for [chunk (partition-all psize pool)]
-              (let [f (cp/future
-                        cpool
-                        (process-chunk chunk msg!))]
-                (d/chain
-                 f #(msg! :chunked {:msg (count %)}))))]
+    (future
+      (cp/with-shutdown! [cpool (cp/threadpool (+ (cp/ncpus) 2))]
+        (msg! :started
+              {:size (count pool) :time (t/now)
+               :description description :promise fp})
+        (let [futures
+              (for [chunk (partition-all psize pool)]
+                (let [f (cp/future
+                          cpool
+                          (process-chunk chunk msg!))]
+                  (d/chain
+                   f #(msg! :chunked {:msg (count %)}))))]
 
-        ;; wait until calculation finishes
-        (doall @(apply d/zip futures)))
-      (deliver fp true)
-      (msg! :finished {:time (t/now)}))
+          ;; wait until calculation finishes
+          (doall @(apply d/zip futures)))
+        (deliver fp true)
+        (msg! :finished {:time (t/now)})))
     uid))
 
 ;; (def docs (u/walk-over-file "examples.zip"))

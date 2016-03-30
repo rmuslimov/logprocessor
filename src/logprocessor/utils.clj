@@ -144,3 +144,5 @@
         (list result)
         (cons result
               (walk-over-file zipfile (rest entries))))))))
+
+(defn kws-map [f m] (zipmap (map f (keys m)) (vals m)))

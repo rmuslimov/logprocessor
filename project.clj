@@ -25,7 +25,8 @@
                  [org.danielsz/system "0.2.0-SNAPSHOT"]
                  [reloaded.repl "0.2.1"]
                  [compojure "1.5.0"]
-                 [liberator "0.14.0"]]
+                 [liberator "0.14.0"]
+                 [ring "1.4.0"]]
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
   :main ^:skip-aot logprocessor.core
   :target-path "target/%s"
