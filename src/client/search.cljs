@@ -11,7 +11,8 @@
               md-icon-button
               title
               v-box
-              v-split]]
+              v-split
+              h-split]]
             [goog.dom :as dom]
             [reagent.core :as reagent]))
 
@@ -69,14 +70,8 @@
                      :size :larger
                      :on-click #()]]]]]]
         [gap :size "10px"]
-        [v-box
-         :margin "0px"
-         :size "1"
-         :children
-         [[label :label "Results..."]
-          [v-split
-           :panel-1 [panel]
-           :panel-2 [panel]
-           :size "1" :initial-split "25%"
-           ]]]
-        ]])))
+        [h-split
+         :panel-1 [panel]
+         :panel-2 [panel]
+         :size "1" :initial-split "25%"]]
+        ])))
