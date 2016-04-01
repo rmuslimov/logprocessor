@@ -17,13 +17,13 @@
     {:request
      {:_all {:enabled false}
       :properties
-      {:id {:type :string :index :not_analyzed}
-       :pcc {:type :string :index :not_analyzed}
-       :message-id {:type :string :index :not_analyzed}
-       :name {:type :string :index :not_analyzed}
-       :service {:type :string :index :not_analyzed}
-       :session-id {:type :string :index :not_analyzed}
-       :timestamp {:type :date}
+      {:id {:type :string :index :analyzed}
+       :pcc {:type :string :index :analyzed}
+       :message-id {:type :string :index :analyzed}
+       :name {:type :string :index :analyzed}
+       :service {:type :string :index :analyzed}
+       :session-id {:type :string :index :analyzed}
+       :timestamp {:type :date :format "yyyy-MM-ddTHH:mm:ss"}
        :Ind {:type :boolean}}}}})
 
 (defn es-url
@@ -91,4 +91,5 @@
         (map json/write-str)
         (string/join "\n")) "\n"))
 
-;; (create-index! "titan-2015.11")
+;; @(create-index! "titan-2015.11")
+;; @(http/delete (es-url "titan-2015.11"))
