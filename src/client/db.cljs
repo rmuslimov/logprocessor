@@ -1,21 +1,57 @@
 (ns client.db
-  (:require [reagent.core :as reagent]))
+  (:require [cljs-http.client :as http]
+            [cljs-time.format :as f]
+            [cljs.core.async :as a]
+            [reagent.core :as reagent])
+  (:require-macros
+   [cljs.core.async.macros :refer [go]]))
+
+(def es-url "http://lf:9200//titan-2015.11/_search")
+(defn es-qsq [query]
+  {:query {:query_string {:query query}} :size 20})
+
 
 (def columns
-  [{:field :utc :name "UTC" :width 3}
-   {:field :soap :name "SOAP" :width 2}
-   {:field :session-id :name "Session ID" :width 7}
-   {:field :pnr :name "PNR" :width 2}])
+  [{:field :timestamp :name "UTC" :width 1}
+   {:field :service :name "Method" :width 2}
+   {:field :session-id :name "Session ID" :width 3}
+   {:field :id :name "Message ID" :width 3}
+   {:field :pcc :name "PNR" :width 1}])
 
 (def state
   (reagent/atom
-   {:query ""
-    :rows
-    [{:id 1 :utc "12 Nov, 14:55:56" :soap "OTA_PingRQ"
-      :session-id "efaf295e-895e-11e5-9fb8-0eebf1123529" :pnr "ZENYOU"}
-     {:id 2 :utc "14 Nov, 14:55:56" :soap "OTA_PingRQ"
-      :session-id "efaf295e-895e-11e5-9fb8-0eebf1123529" :pnr "ZENYOU"}
-     {:id 3 :utc "15 Nov, 14:55:56" :soap "OTA_PingRQ"
-      :session-id "efaf295e-895e-11e5-9fb8-0eebf1123529" :pnr "ZENYOU"}]
+   {:query "timestamp:[2015-11-12T19:50:00 TO 2015-11-12T19:55:00]"
+    :rows []
     :status :ready   ;; or waiting
     }))
+
+(def cfmt (f/formatter "yyyy-MM-ddTHH:mm:ss"))
+(def rfmt (f/formatter "d yy, HH:mm:ss"))
+
+(defn process-es-response
+  ""
+  [rsp]
+  (let [{{{hits :hits} :hits} :body} rsp]
+    (for [h hits]
+      (let [{{:keys [session-id message-id service timestamp pcc]} :_source} h]
+        {:id message-id
+         :session-id session-id
+         :service service
+         :timestamp (->> timestamp (f/parse cfmt) (f/unparse rfmt))
+         :pcc pcc}))))
+
+(defn run-search
+  ""
+  []
+  (go
+    (let [{query :query} @state
+          rsp (a/<! (http/post es-url {:json-params (es-qsq query)}))
+          rows (process-es-response rsp)]
+      (swap! state assoc :status :ready)
+      (swap! state assoc :rows rows))))
+
+(add-watch
+ state :dispatch
+ (fn [key atom old new]
+   (when (and (= (:status new) :waiting) (= (:status old) :ready))
+     (run-search))))

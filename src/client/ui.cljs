@@ -10,6 +10,7 @@
               label
               line
               md-icon-button
+              scroller
               v-box
               v-split]]
             [reagent.core :as reagent]
@@ -68,7 +69,10 @@
          :child [input-text
                  :model (:query @state)
                  :width "100%"
-                 :on-change (partial swap! state update :query)]]
+                 :on-change #(do
+                               (swap! state assoc :query %)
+                               (swap! state assoc :status :waiting))
+                 ]]
         [gap :size "10px"]
         [box
          :align :center
@@ -80,8 +84,8 @@
     [gap :size "10px"]
     (if (= (:status @state) :waiting)
       [h-box :size "none" :children
-       [[label :label "Waiting for response..."]]]
+       [[label :label "Waiting for response"]]]
       [v-split
        :margin "0px"
-       :panel-1 [data-table (:rows @state)]
+       :panel-1 [scroller :v-scroll :auto :child [data-table (:rows @state)]]
        :panel-2 [panel] :size "1" :initial-split "75%"])]])
