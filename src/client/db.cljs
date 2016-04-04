@@ -15,16 +15,18 @@
    :size 20 :sort {:timestamp {:order :asc}}})
 
 (def columns
-  [{:field "View" :name "#" :width 1 :link false :on-click #(println "as")}
+  [{:field "View" :name "#" :width 1 :link false :on-click true}
    {:field :timestamp :name "UTC" :width 3 :link false}
-   {:field :service :name "Method1" :width 6 :link true}
+   {:field :service :name "Method" :width 6 :link true}
    {:field :session-id :name "Session ID" :width 9 :link true}
-   {:field :pcc :name "PCC" :width 3 :link false}])
+   {:field :message-id :name "PCC" :width 3 :link false}])
 
+;; @state
 (defonce state
   (reagent/atom
    {:query "timestamp:[2015-11-12T19:50:00 TO 2015-11-12T19:55:00]"
     :status :ready   ;; or waiting
+    :active nil      ;; id of record shown in detail panel
     :rows []}))
 
 (def cfmt (f/formatter "yyyy-MM-ddTHH:mm:ss"))
@@ -34,15 +36,11 @@
   ""
   [rsp]
   (let [{{{hits :hits} :hits} :body} rsp]
-    (for [h hits]
-      (let [{{:keys [session-id message-id service timestamp pcc]} :_source
-             id :_id} h]
-        {:id id
-         :session-id session-id
-         :message-id message-id
-         :service service
-         :timestamp (->> timestamp (f/parse cfmt) (f/unparse rfmt))
-         :pcc pcc}))))
+    (for [{{:keys [timestamp pcc message-id] :as source} :_source} hits]
+      (merge
+       source
+       {:id message-id :timestamp (->> timestamp (f/parse cfmt) (f/unparse rfmt))}
+       ))))
 
 (defn run-search
   "Run ES simple query string query and update state."
@@ -69,5 +67,7 @@
 (add-watch
  state :dispatch
  (fn [key atom old new]
-   (when (and (= (:status new) :waiting) (= (:status old) :ready))
-     (run-search))))
+   ;; listen status change
+   (let [{oldstatus :status} old {newstatus :status} new]
+     (when (and (= newstatus :waiting) (= oldstatus :ready))
+       (run-search)))))

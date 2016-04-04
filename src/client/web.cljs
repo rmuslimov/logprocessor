@@ -8,6 +8,7 @@
 (reagent/render-component
  [search-page] (. js/document (getElementById "app")))
 
+;; trivial usage, to handle on initial load only
 (secretary/dispatch!
  (str
    (-> js/window .-location .-pathname)

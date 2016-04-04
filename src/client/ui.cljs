@@ -1,20 +1,21 @@
 (ns client.ui
-  (:require [goog.dom :as dom]
+  (:require [client.db :refer [columns state update-query]]
+            [clojure.string :as str]
+            [goog.dom :as dom]
             [re-com.core
              :refer
              [box
-              flex-child-style
               gap
               h-box
+              h-split
               input-text
               label
               line
               md-icon-button
               scroller
-              v-box
-              v-split]]
-            [reagent.core :as reagent]
-            [client.db :refer [state columns update-query]]))
+              v-box]]))
+
+(declare on-row-view)
 
 (def screen-height (.-height (dom/getViewportSize (dom/getWindow))))
 
@@ -32,7 +33,7 @@
          :child
          (cond
            link [:div [:a {:href (str "?q=" (name field) ":" value)} value]]
-           on-click [:div [:a {:on-click on-click :href "#"} field]]
+           on-click [:div [:a {:on-click (partial on-row-view (:id row)) :href "#"} field]]
            :else [label :label value])]))
     columns)])
 
@@ -53,13 +54,9 @@
 
 (defn panel
   []
-  [box :size "auto"
-   :child
-   [:div {:style (merge (flex-child-style "1")
-                        {:background-color "#fff4f4"
-                         :border           "1px solid lightgray"
-                         :border-radius    "4px"
-                         :padding          "0px 20px 0px 20px"})}]])
+  (let [{r :rows active :active} @state
+        {value :raw} (first (filter #(= (:id %) active) r))]
+    [box :size "1" :child [:span {:style {:font-size 11}} value]]))
 
 (defn search-page []
   [v-box
@@ -92,7 +89,12 @@
     (if (= (:status @state) :waiting)
       [h-box :size "none" :children
        [[label :label "Waiting for response"]]]
-      [v-split
+      [h-split
        :margin "0px"
        :panel-1 [data-table (:rows @state)]
-       :panel-2 [panel] :size "1" :initial-split "75%"])]])
+       :panel-2 [panel] :size "1" :initial-split "70%"])]])
+
+(defn on-row-view
+  "Return ."
+  [row-id evt]
+  (swap! state assoc :active row-id))
