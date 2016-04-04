@@ -1,8 +1,9 @@
 (ns logprocessor.core
   (:gen-class)
-  (:require [com.stuartsierra.component :as cmp]
+  (:require [clojure.java.io :as io]
+            [com.stuartsierra.component :as cmp]
             [compojure
-             [core :refer [ANY defroutes]]
+             [core :refer [ANY defroutes GET]]
              [route :as route]]
             [liberator.core :refer [defresource]]
             [logprocessor
@@ -44,7 +45,8 @@
         {:message {:task-id r}}))))
 
 (defroutes app
-  (ANY "/" [] tasks)
+  (GET "/" [] (io/resource "public/index.html"))
+  (ANY "/tasks" [] tasks)
   (route/resources "/")
   (route/not-found "<h2>Page not found.</h2>"))
 

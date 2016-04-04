@@ -28,7 +28,8 @@
                  [re-com "0.8.0"]
                  [reagent "0.5.1"]
                  [reloaded.repl "0.2.1"]
-                 [ring "1.4.0"]]
+                 [ring "1.4.0"]
+                 [secretary "1.2.3"]]
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
   :main ^:skip-aot logprocessor.core
   :target-path "target/%s"

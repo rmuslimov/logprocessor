@@ -24,22 +24,29 @@
    :class "rc-div-table-row"
    :children
    (map
-    (fn [{:keys [field width]} v]
-      [box :size (str width) :child [label :label (field row)]]) columns)])
+    (fn [{:keys [field width link]} v]
+      (let [value (field row)
+            href (str "?q=" (name field) ":" value)]
+        [box
+         :size (str width)
+         :child (if link [:div [:a {:href href} value]]
+                    [label :label value])]))
+      columns)])
 
 (defn data-table
   [rows]
-  [v-box
+  [scroller :v-scroll :auto :child
+   [v-box
    :class "rc-div-table"
    :size "auto"
    :children
    [[h-box
-     :class    "rc-div-table-header"
-     :children
-     (map
-      (fn [{:keys [name width] :or {:width 1}} v]
-        [box :size (str width) :child [label :label name]]) columns)]
-    (for [row rows] ^{:key (:id row)} [data-row row])]])
+      :class "rc-div-table-header"
+      :children
+      (map
+       (fn [{:keys [name width] :or {:width 1}} v]
+         [box :size (str width) :child [label :label name]]) columns)]
+     (for [row rows] ^{:key (:id row)} [data-row row])]]])
 
 (defn panel
   []
@@ -87,5 +94,5 @@
        [[label :label "Waiting for response"]]]
       [v-split
        :margin "0px"
-       :panel-1 [scroller :v-scroll :auto :child [data-table (:rows @state)]]
+       :panel-1 [data-table (:rows @state)]
        :panel-2 [panel] :size "1" :initial-split "75%"])]])
