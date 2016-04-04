@@ -2,6 +2,7 @@
   (:require [cljs-http.client :as http]
             [cljs-time.format :as f]
             [cljs.core.async :as a]
+            [clojure.string :as str]
             [reagent.core :as reagent]
             [secretary.core :as secretary :refer-macros [defroute]])
   (:require-macros [cljs.core.async.macros :refer [go]]))
@@ -11,8 +12,11 @@
 (def es-url "http://lf:9200//titan-2015.11/_search")
 (defn es-qsq [query]
   {:query
-   {:query_string {:query query}}
+   {:query_string
+    {:query query :analyze_wildcard true :default_field :raw
+     :default_operator "AND"}}
    :size 20 :sort {:timestamp {:order :asc}}})
+
 
 (def columns
   [{:field "View" :name "#" :width 1 :link false :on-click true}
