@@ -18,7 +18,7 @@
   [{:field :timestamp :name "UTC" :width 1 :link false}
    {:field :service :name "Method" :width 2 :link true}
    {:field :session-id :name "Session ID" :width 3 :link true}
-   {:field :message-id :name "Message ID" :width 3 :link false}
+   ;; {:field :message-id :name "Message ID" :width 3 :link false}
    {:field :pcc :name "PCC" :width 1 :link false}])
 
 (defonce state
@@ -28,7 +28,7 @@
     :rows []}))
 
 (def cfmt (f/formatter "yyyy-MM-ddTHH:mm:ss"))
-(def rfmt (f/formatter "d yy, HH:mm:ss"))
+(def rfmt (f/formatter "d MMM yy, HH:mm:ss"))
 
 (defn process-es-response
   ""
@@ -54,14 +54,18 @@
       (swap! state assoc :status :ready)
       (swap! state assoc :rows rows))))
 
+(defn update-query
+  "Replace query field in db with given value and run search"
+  [query]
+  (swap! state assoc :query query)
+  (swap! state assoc :status :waiting))
+
 ;; routing
 (defroute search-page-route "/" {:as params}
   (let [{{q :q} :query-params} params]
-    (when q
-      (swap! state assoc :query q)
-      (swap! state assoc :status :waiting))))
+    (when q (update-query q))))
 
-;; watching state
+;; watchin for state changes
 (add-watch
  state :dispatch
  (fn [key atom old new]

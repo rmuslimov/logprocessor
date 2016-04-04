@@ -14,7 +14,7 @@
               v-box
               v-split]]
             [reagent.core :as reagent]
-            [client.db :refer [state columns]]))
+            [client.db :refer [state columns update-query]]))
 
 (def screen-height (.-height (dom/getViewportSize (dom/getWindow))))
 
@@ -76,10 +76,7 @@
          :child [input-text
                  :model (:query @state)
                  :width "100%"
-                 :on-change #(do
-                               (swap! state assoc :query %)
-                               (swap! state assoc :status :waiting))
-                 ]]
+                 :on-change update-query]]
         [gap :size "10px"]
         [box
          :align :center
@@ -87,7 +84,7 @@
                  :emphasise? true
                  :md-icon-name "zmdi-search"
                  :size :larger
-                 :on-click #()]]]]]]
+                 :on-click update-query]]]]]]
     [gap :size "10px"]
     (if (= (:status @state) :waiting)
       [h-box :size "none" :children
