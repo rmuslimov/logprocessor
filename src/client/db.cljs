@@ -15,11 +15,11 @@
    :size 20 :sort {:timestamp {:order :asc}}})
 
 (def columns
-  [{:field :timestamp :name "UTC" :width 1 :link false}
-   {:field :service :name "Method" :width 2 :link true}
-   {:field :session-id :name "Session ID" :width 3 :link true}
-   ;; {:field :message-id :name "Message ID" :width 3 :link false}
-   {:field :pcc :name "PCC" :width 1 :link false}])
+  [{:field "View" :name "#" :width 1 :link false :on-click #(println "as")}
+   {:field :timestamp :name "UTC" :width 3 :link false}
+   {:field :service :name "Method1" :width 6 :link true}
+   {:field :session-id :name "Session ID" :width 9 :link true}
+   {:field :pcc :name "PCC" :width 3 :link false}])
 
 (defonce state
   (reagent/atom

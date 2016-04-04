@@ -12,7 +12,15 @@
 (def es-bulk-size 100)
 
 (def es-index-conf
-  {:settings {:number_of_shards 1}
+  {:settings
+   {:number_of_shards 1
+    :analysis
+    {:analyzer
+     {:readxml
+      {:type :custom
+       :char_filter ["html_strip"]
+       :tokenizer :classic
+       :filter :standard}}}}
    :mappings
     {:request
      {:_all {:enabled false}
@@ -23,8 +31,12 @@
        :name {:type :string :index :analyzed}
        :service {:type :string :index :analyzed}
        :session-id {:type :string :index :analyzed}
-       :timestamp {:type :date :format "yyyy-MM-ddTHH:mm:ss"}
+       :timestamp {:type :date}
+       :raw {:type :string :analyzer :readxml}
        :Ind {:type :boolean}}}}})
+
+;; @(http/delete (es-url "titan-2015.11"))
+;; @(create-index! "titan-2015.11")
 
 (defn es-url
   [slug]
@@ -60,10 +72,16 @@
 
 (defn put-bulk-items!
   "Use bulk api for putting many items. Return items inserted."
-  [items]
-  @(d/chain
-    (http/put (es-url "_bulk") {:body items}) :body
-    json/read-str #(get % "items")))
+  [items msg!]
+  (try
+    (let [rsp @(d/chain
+                (http/put (es-url "_bulk") {:body items}) :body
+                json/read-str #(get % "items"))]
+      (let [errs (filter #(get-in % ["index" "error" "reason"]) rsp)]
+        (if (seq errs)
+          (throw (Exception. (string/join "\n" errs))))))
+    (catch Exception e
+      (msg! :exc {:type :es-bulk :err (str e)}))))
 
 (defn prepend-each-item-with
   [prepend-func items]
@@ -76,20 +94,24 @@
 
 (defn create-operation-header
   "Create ES bulk api consistent header for json doc given."
-  [m]
+  [{:keys [message-id date]}]
   {:index
-   {:_id (:message-id m) :_type "sabre"
-    :_index (->> m :date (f/unparse (f/formatter "Y.M")) (format "titan-%s"))}})
+   {:_id message-id :_type "sabre"
+    :_index (->> date (f/unparse (f/formatter "Y.M")) (format "titan-%s"))}})
 
 (defn iter-es-bulk-documents
   "Generates seq for ES bulk API, param should lazy-seq"
-  [items]
-  (str (->>
-        items
-        (prepend-each-item-with create-operation-header)
-        (map #(dissoc % :date))
-        (map json/write-str)
-        (string/join "\n")) "\n"))
+  [items msg!]
+  (try
+    (str (->>
+          items
+          (prepend-each-item-with create-operation-header)
+          (map #(dissoc % :date))
+          (map json/write-str)
+          (string/join "\n")) "\n")
+    (catch Exception e
+      (msg! :exc {:type :es-prepare :err (str e)}))))
+
 
 ;; @(create-index! "titan-2015.11")
 ;; @(http/delete (es-url "titan-2015.11"))

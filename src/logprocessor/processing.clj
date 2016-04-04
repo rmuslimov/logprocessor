@@ -11,6 +11,8 @@
 (def psize 100)             ;; default size
 (def rp (ms/stream 1e3))    ;; reporting stream
 
+;; (ms/consume println rp)
+
 (def state (atom {:busy nil :tasks {}}))
 
 (defn msg!
@@ -56,8 +58,8 @@
       load-items
       (u/process-items msg!)
       (#(remove :exception %))
-      es/iter-es-bulk-documents
-      es/put-bulk-items!))
+      (es/iter-es-bulk-documents msg!)
+      (es/put-bulk-items! msg!)))
 
 (defn process
   "Process docs gotten from somewhere and paste to ES."

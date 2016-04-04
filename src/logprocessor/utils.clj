@@ -53,9 +53,9 @@
   "Process list of items in pool, throw exc if occur."
   [pool msg!]
   (for [item pool]
-    (let [{name :name} item]
+    (let [{name :name source :source} item]
       (try
-        (-> item :source process-file (assoc :name name))
+        (merge (process-file source) {:name name :raw source})
         (catch Exception e
           (do
             (msg! :exc {:type :process-items :name name :err (str e)})

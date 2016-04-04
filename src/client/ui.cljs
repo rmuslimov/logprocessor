@@ -19,19 +19,22 @@
 (def screen-height (.-height (dom/getViewportSize (dom/getWindow))))
 
 (defn data-row
+  "Render a row in table "
   [row]
   [h-box
    :class "rc-div-table-row"
    :children
    (map
-    (fn [{:keys [field width link]} v]
-      (let [value (field row)
-            href (str "?q=" (name field) ":" value)]
+    (fn [{:keys [field width link on-click]} v]
+      (let [value (if (string? field) field (field row))]
         [box
          :size (str width)
-         :child (if link [:div [:a {:href href} value]]
-                    [label :label value])]))
-      columns)])
+         :child
+         (cond
+           link [:div [:a {:href (str "?q=" (name field) ":" value)} value]]
+           on-click [:div [:a {:on-click on-click :href "#"} field]]
+           :else [label :label value])]))
+    columns)])
 
 (defn data-table
   [rows]
