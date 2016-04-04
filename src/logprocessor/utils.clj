@@ -6,6 +6,7 @@
              [format :as f]]
             [clj-yaml.core :as yaml]
             [clojure.java.io :as io]
+            [environ.core :refer [env]]
             [fs.core :as fs]
             [logprocessor.parsers :as p]
             [manifold
@@ -13,7 +14,7 @@
              [stream :as ms]])
   (:import java.util.zip.ZipFile))
 
-(def s3-root "lboeing_xml")
+(def s3-root (env :s3bucket))
 (def sabre-ts (f/formatters :date-hour-minute-second))
 
 (def
@@ -24,7 +25,7 @@
 
 (defn- load-creds []
   (let [{{ac :access_key sc :secret_key} :aws}
-        (-> "~/.eagle" fs/expand-home slurp yaml/parse-string)]
+        (-> (env :eagle-file) fs/expand-home slurp yaml/parse-string)]
     (list ac sc)))
 
 (def get-creds
@@ -146,3 +147,5 @@
               (walk-over-file zipfile (rest entries))))))))
 
 (defn kws-map [f m] (zipmap (map f (keys m)) (vals m)))
+
+(defmacro cljs-env [kw] (env kw))

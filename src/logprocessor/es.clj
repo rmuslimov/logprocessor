@@ -4,11 +4,11 @@
              [set :as set]
              [string :as string]]
             [clojure.data.json :as json]
+            [environ.core :refer [env]]
             [logprocessor.utils :as u]
             [manifold.deferred :as d]
             [org.httpkit.client :as http]))
 
-(def elastic-url "http://lf:9200")
 (def es-bulk-size 100)
 
 (def es-index-conf
@@ -40,7 +40,7 @@
 
 (defn es-url
   [slug]
-  (format "%s/%s" elastic-url slug))
+  (format "%s/%s" (env :es-url) slug))
 
 (defn get-existing-indices
   []

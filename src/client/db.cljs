@@ -5,11 +5,12 @@
             [clojure.string :as str]
             [reagent.core :as reagent]
             [secretary.core :as secretary :refer-macros [defroute]])
-  (:require-macros [cljs.core.async.macros :refer [go]]))
+  (:require-macros [cljs.core.async.macros :refer [go]]
+                   [logprocessor.utils :as env :refer [cljs-env]]))
 
 (declare search-page-route)
 
-(def es-url "http://lf:9200//titan-2015.11/_search")
+(def es-url (str (cljs-env :es-url) "/titan-2015.11/_search"))
 (defn es-qsq [query]
   {:query
    {:query_string

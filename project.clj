@@ -29,20 +29,22 @@
                  [reagent "0.5.1"]
                  [reloaded.repl "0.2.1"]
                  [ring "1.4.0"]
-                 [secretary "1.2.3"]]
+                 [secretary "1.2.3"]
+                 [environ "1.0.2"]]
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
   :main ^:skip-aot logprocessor.core
   :target-path "target/%s"
-  :cljsbuild {:figwheel-options {}
-              :build-ids ["dev"]
-              :all-builds
-              [{:id "dev"
-                :source-paths ["src/client" "dev"]
-                :figwheel true
-                :compiler {:main "client.web"
-                           :asset-path "out"
-                           :output-to "resources/public/main.js"
-                           :output-dir "resources/public/out"
-                           :verbose true}}]}
+  :plugins [[lein-cljsbuild "1.1.3"] [lein-environ "1.0.2"]]
+  :cljsbuild {:figwheel false
+              :build-ids ["prod"]
+              :builds
+              [{:id "prod"
+                :source-paths ["src/client"]
+                :compiler {:optimizations :advanced
+                           :output-to "resources/public/lp.js"
+                           :pretty-print false}}]}
   :profiles {:dev {:source-paths ["dev"]}
-             :uberjar {:aot :all}})
+             :uberjar {:aot :all}}
+  :env {:es-url "http://localhost:9200/"
+        :eagle-file "~/.eagle"
+        :s3bucket "lboeing_xml"})
