@@ -34,8 +34,8 @@
        :source-paths ["src"]
        :compiler {:main "client.web"
                   :asset-path "out"
-                  :output-to "resources/public/main.js"
-                  :output-dir "resources/public/out"
+                  :output-to "dev-resources/public/main.js"
+                  :output-dir "dev-resources/public/out"
                   :verbose true}}]}))
 
 (defn stop-cljs []

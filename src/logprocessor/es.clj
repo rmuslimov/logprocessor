@@ -116,11 +116,9 @@
 (defn get-item-by-id
   "Make search in ES by id"
   [id]
-  (let [rq (http/get
-            (es-url (format "titan-2015.11/sabre/%s" id)))]
-    (d/chain
-     rq :body json/read-str #(get-in % ["_source" "raw"]))))
+  (let [bodyrq (json/write-str {:query {:term {:_id id}}})
+        rq (http/get (es-url "titan*/_search") {:body bodyrq})]
+    (d/chain rq :body json/read-str
+             #(get-in % ["hits" "hits" 0 "_source" "raw"]))))
 
-;; @(get-item-by-id "514550e8-8942-11e5-9fb8-0eebf1123529")
-;; @(create-index! "titan-2015.11")
-;; @(http/delete (es-url "titan-2015.11"))
+;; @(get-item-by-id "83aa8728-8838-4156-bf35-a4e7c1139861@54")

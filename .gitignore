@@ -12,3 +12,6 @@ pom.xml.asc
 /dev-resources/examples.zip
 *.log
 resources/public/out/*
+dev-resources/public/out/*
+resources/public/main.js
+dev-resources/public/main.js

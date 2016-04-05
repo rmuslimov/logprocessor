@@ -8,7 +8,7 @@
   (:require-macros [cljs.core.async.macros :refer [go]]
                    [logprocessor.utils :as env :refer [cljs-env]]))
 
-(def es-url (str (cljs-env :es-url) "/titan-2015.11/_search"))
+(def es-url (str (cljs-env :es-url) "/titan-*/_search"))
 (defn es-qsq [query]
   {:query
    {:query_string

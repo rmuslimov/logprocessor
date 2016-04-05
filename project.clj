@@ -41,7 +41,7 @@
               [{:id "prod"
                 :source-paths ["src/client"]
                 :compiler {:optimizations :advanced
-                           :output-to "resources/public/lp.js"
+                           :output-to "resources/public/main.js"
                            :pretty-print false}}]}
   :profiles {:dev {:source-paths ["dev"]}
              :uberjar {:aot :all}}
