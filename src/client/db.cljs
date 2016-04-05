@@ -8,23 +8,21 @@
   (:require-macros [cljs.core.async.macros :refer [go]]
                    [logprocessor.utils :as env :refer [cljs-env]]))
 
-(declare search-page-route)
-
 (def es-url (str (cljs-env :es-url) "/titan-2015.11/_search"))
 (defn es-qsq [query]
   {:query
    {:query_string
     {:query query :analyze_wildcard true :default_field :raw
      :default_operator "AND"}}
-   :size 20 :sort {:timestamp {:order :asc}}})
-
+   :size 20 :sort {:timestamp {:order :asc}}
+   :_source {:exclude [:raw]}})
 
 (def columns
-  [{:field "View" :name "#" :width 1 :link false :on-click true}
+  [{:field "View" :name "#" :width 1 :link false :href true}
    {:field :timestamp :name "UTC" :width 3 :link false}
    {:field :service :name "Method" :width 6 :link true}
    {:field :session-id :name "Session ID" :width 9 :link true}
-   {:field :message-id :name "PCC" :width 3 :link false}])
+   {:field :pcc :name "PCC" :width 3 :link false}])
 
 ;; @state
 (defonce state
@@ -44,15 +42,15 @@
     (for [{{:keys [timestamp pcc message-id] :as source} :_source} hits]
       (merge
        source
-       {:id message-id :timestamp (->> timestamp (f/parse cfmt) (f/unparse rfmt))}
-       ))))
+       {:id message-id
+        :timestamp (->> timestamp (f/parse cfmt) (f/unparse rfmt))}))))
 
 (defn run-search
   "Run ES simple query string query and update state."
   []
   (go
-    (let [{query :query} @state
-          rsp (a/<! (http/post es-url {:json-params (es-qsq query)}))
+    (let [{q :query} @state
+          rsp (a/<! (http/post es-url {:json-params (es-qsq q)}))
           rows (process-es-response rsp)]
       (swap! state assoc :status :ready)
       (swap! state assoc :rows rows))))

@@ -26,14 +26,14 @@
    :class "rc-div-table-row"
    :children
    (map
-    (fn [{:keys [field width link on-click]} v]
+    (fn [{:keys [field width link href]} v]
       (let [value (if (string? field) field (field row))]
         [box
          :size (str width)
          :child
          (cond
+           href [:div [:a {:href (str "/raw/" (:id row)) :target :_blank} field]]
            link [:div [:a {:href (str "?q=" (name field) ":" value)} value]]
-           on-click [:div [:a {:on-click (partial on-row-view (:id row)) :href "#"} field]]
            :else [label :label value])]))
     columns)])
 
@@ -88,11 +88,8 @@
     [gap :size "10px"]
     (if (= (:status @state) :waiting)
       [h-box :size "none" :children
-       [[label :label "Waiting for response"]]]
-      [h-split
-       :margin "0px"
-       :panel-1 [data-table (:rows @state)]
-       :panel-2 [panel] :size "1" :initial-split "70%"])]])
+       [[label :label "Waiting for response..."]]]
+      [data-table (:rows @state)])]])
 
 (defn on-row-view
   "Return ."

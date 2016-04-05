@@ -35,12 +35,13 @@
        :raw {:type :string :analyzer :readxml}
        :Ind {:type :boolean}}}}})
 
-;; @(http/delete (es-url "titan-2015.11"))
-;; @(create-index! "titan-2015.11")
 
 (defn es-url
   [slug]
   (format "%s/%s" (env :es-url) slug))
+
+;; @(create-index! "titan-2015.11")
+;; @(http/delete (es-url "titan-2015.11"))
 
 (defn get-existing-indices
   []
@@ -112,6 +113,14 @@
     (catch Exception e
       (msg! :exc {:type :es-prepare :err (str e)}))))
 
+(defn get-item-by-id
+  "Make search in ES by id"
+  [id]
+  (let [rq (http/get
+            (es-url (format "titan-2015.11/sabre/%s" id)))]
+    (d/chain
+     rq :body json/read-str #(get-in % ["_source" "raw"]))))
 
+;; @(get-item-by-id "514550e8-8942-11e5-9fb8-0eebf1123529")
 ;; @(create-index! "titan-2015.11")
 ;; @(http/delete (es-url "titan-2015.11"))

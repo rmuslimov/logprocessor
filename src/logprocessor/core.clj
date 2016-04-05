@@ -16,6 +16,12 @@
 (def allowed-levels #{"bcd1" "bcd2" "stage" "dev" "release"})
 (def allowed-apps #{"fokker"})
 
+(defresource rawxml
+  :available-media-types ["application/xml"]
+  :allowed-methods [:get]
+  :handle-ok
+  (fn [{{{id :id} :route-params} :request}] @(es/get-item-by-id id)))
+
 (defresource tasks
   :available-media-types ["application/json"]
   :allowed-methods [:get :put]
@@ -46,6 +52,7 @@
 
 (defroutes app
   (GET "/" [] (io/resource "public/index.html"))
+  (GET "/raw/:id" [id] rawxml)
   (ANY "/tasks" [] tasks)
   (route/resources "/")
   (route/not-found "<h2>Page not found.</h2>"))
