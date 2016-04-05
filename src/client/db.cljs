@@ -2,11 +2,11 @@
   (:require [cljs-http.client :as http]
             [cljs-time.format :as f]
             [cljs.core.async :as a]
-            [clojure.string :as str]
             [reagent.core :as reagent]
             [secretary.core :as secretary :refer-macros [defroute]])
-  (:require-macros [cljs.core.async.macros :refer [go]]
-                   [logprocessor.utils :as env :refer [cljs-env]]))
+  (:require-macros
+   [cljs.core.async.macros :refer [go]]
+   [logprocessor.utils :as env :refer [cljs-env]]))
 
 (def es-url (str (cljs-env :es-url) "/titan-*/_search"))
 (defn es-qsq [query]

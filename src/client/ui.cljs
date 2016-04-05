@@ -1,21 +1,9 @@
 (ns client.ui
   (:require [client.db :refer [columns state update-query]]
-            [clojure.string :as str]
             [goog.dom :as dom]
             [re-com.core
              :refer
-             [box
-              gap
-              h-box
-              h-split
-              input-text
-              label
-              line
-              md-icon-button
-              scroller
-              v-box]]))
-
-(declare on-row-view)
+             [box gap h-box input-text label line md-icon-button scroller v-box]]))
 
 (def screen-height (.-height (dom/getViewportSize (dom/getWindow))))
 
@@ -52,12 +40,6 @@
          [box :size (str width) :child [label :label name]]) columns)]
      (for [row rows] ^{:key (:id row)} [data-row row])]]])
 
-(defn panel
-  []
-  (let [{r :rows active :active} @state
-        {value :raw} (first (filter #(= (:id %) active) r))]
-    [box :size "1" :child [:span {:style {:font-size 11}} value]]))
-
 (defn search-page []
   [v-box
    :padding "10px"
@@ -90,8 +72,3 @@
       [h-box :size "none" :children
        [[label :label "Waiting for response..."]]]
       [data-table (:rows @state)])]])
-
-(defn on-row-view
-  "Return ."
-  [row-id evt]
-  (swap! state assoc :active row-id))
