@@ -41,7 +41,7 @@
   (format "%s/%s" (env :es-url) slug))
 
 ;; @(create-index! "titan-2016.02")
-;; @(http/delete (es-url "titan-2016.01"))
+;; @(http/delete (es-url "titan-2016.02"))
 
 (defn get-existing-indices
   []

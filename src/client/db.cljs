@@ -8,7 +8,10 @@
    [cljs.core.async.macros :refer [go]]
    [logprocessor.utils :as env :refer [cljs-env]]))
 
-(def es-url (str (cljs-env :es-url) "/titan-*/_search"))
+;; use js host temporarily
+(def es-url
+  (str "http://" (-> js/window .-location .-hostname) ":9200" "/titan-*/_search"))
+
 (defn es-qsq [query]
   {:query
    {:query_string
@@ -25,11 +28,11 @@
    {:field :pcc :name "PCC" :width 3 :link false}])
 
 ;; @state
+;; :query "timestamp:[2015-11-12T19:50:00 TO 2015-11-12T19:55:00]"
 (defonce state
   (reagent/atom
-   {:query "timestamp:[2015-11-12T19:50:00 TO 2015-11-12T19:55:00]"
+   {:query "NAK3"
     :status :ready   ;; or waiting
-    :active nil      ;; id of record shown in detail panel
     :rows []}))
 
 (def cfmt (f/formatter "yyyy-MM-ddTHH:mm:ss"))
