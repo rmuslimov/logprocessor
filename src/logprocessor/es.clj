@@ -40,8 +40,8 @@
   [slug]
   (format "%s/%s" (env :es-url) slug))
 
-;; @(create-index! "titan-2015.11")
-;; @(http/delete (es-url "titan-2015.11"))
+;; @(create-index! "titan-2016.02")
+;; @(http/delete (es-url "titan-2016.01"))
 
 (defn get-existing-indices
   []
@@ -57,7 +57,7 @@
           (for [fn (list dec identity inc)] (fn m)))]
     (map #(format "titan-%d.%02d" y %) months)))
 
-(defn- create-index!
+(defn create-index!
   "Create index if it doesn't exists. Returns manifold/deferred item."
   [name]
   (http/put (es-url name) {:body (json/write-str es-index-conf)}))
@@ -80,7 +80,8 @@
                 json/read-str #(get % "items"))]
       (let [errs (filter #(get-in % ["index" "error" "reason"]) rsp)]
         (if (seq errs)
-          (throw (Exception. (string/join "\n" errs))))))
+          (throw (Exception. (string/join "\n" errs)))
+          rsp)))
     (catch Exception e
       (msg! :exc {:type :es-bulk :err (str e)}))))
 
@@ -98,7 +99,10 @@
   [{:keys [message-id date]}]
   {:index
    {:_id message-id :_type "sabre"
-    :_index (->> date (f/unparse (f/formatter "Y.M")) (format "titan-%s"))}})
+    :_index (->> date (f/unparse (f/formatter "Y.MM")) (format "titan-%s"))}})
+
+;; (require '[clj-time.core :as t])
+;; (f/unparse (f/formatter "Y.MM") (t/date-time 2016 2 2))
 
 (defn iter-es-bulk-documents
   "Generates seq for ES bulk API, param should lazy-seq"

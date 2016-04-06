@@ -1,15 +1,18 @@
 (ns logprocessor.core
   (:gen-class)
   (:require [clojure.java.io :as io]
+            [clojure.tools.nrepl [server :as nrepl-server]]
             [com.stuartsierra.component :as cmp]
             [compojure
              [core :refer [ANY defroutes GET]]
              [route :as route]]
+            [environ.core :refer [env]]
             [liberator.core :refer [defresource]]
             [logprocessor
              [es :as es]
              [processing :as p]
              [utils :as u]]
+            [cider.nrepl :refer (cider-nrepl-handler)]
             [ring.middleware.params :refer [wrap-params]]
             [system.components.http-kit :refer [new-web-server]]))
 
@@ -65,4 +68,6 @@
   ""
   []
   (cmp/start (main-system))
-  (println "Started."))
+  (println "Started.")
+  (nrepl-server/start-server :bind "0.0.0.0" :port 7801 :handler cider-nrepl-handler)
+  (println "Started repl."))

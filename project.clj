@@ -19,7 +19,6 @@
                  [joda-time/joda-time "2.9.2"]
                  [liberator "0.14.0"]
                  [manifold "0.1.3-alpha2"]
-                 [midje "1.8.3"]
                  [org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "1.7.228"]
                  [org.clojure/core.async "0.2.374"]
@@ -30,11 +29,12 @@
                  [reloaded.repl "0.2.1"]
                  [ring "1.4.0"]
                  [secretary "1.2.3"]
+                 [org.clojure/tools.nrepl "0.2.11"]
                  [environ "1.0.2"]]
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
   :main ^:skip-aot logprocessor.core
   :target-path "target/%s"
-  :plugins [[lein-cljsbuild "1.1.3"] [lein-environ "1.0.2"]]
+  :plugins [[lein-cljsbuild "1.1.3"] [lein-environ "1.0.2"] [cider/cider-nrepl "0.12.0-SNAPSHOT"]]
   :cljsbuild {:figwheel false
               :build-ids ["prod"]
               :builds
@@ -47,4 +47,5 @@
              :uberjar {:aot :all}}
   :env {:es-url "http://localhost:9200/"
         :eagle-file "~/.eagle"
-        :s3bucket "lboeing_xml"})
+        :s3bucket "lboeing_xml"
+        :repl-port "7801"})

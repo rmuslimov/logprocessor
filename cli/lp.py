@@ -4,8 +4,8 @@ Usage:
   lp-cli.py <url> <level> <app> <year> <month> [<day>]
 
 Examples:
-  python lp-cli.py lf:7800 bcd1 fokker 2016 2 2
-  python lp-cli.py lf:7800 bcd1 fokker 2016 2
+  python cli/lp.py lf:7800/tasks bcd1 fokker 2016 2 2
+  python cli/lp.py lf:7800/tasks bcd1 fokker 2016 2
 """
 
 import json
