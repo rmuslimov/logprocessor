@@ -17,7 +17,7 @@
    {:query_string
     {:query query :analyze_wildcard true :default_field :raw
      :default_operator "AND"}}
-   :size 20 :sort {:timestamp {:order :asc}}
+   :size 120 :sort {:timestamp {:order :asc}, :service {:order :asc}}
    :_source {:exclude [:raw]}})
 
 (def columns
@@ -33,6 +33,7 @@
   (reagent/atom
    {:query "NAK3"
     :status :ready   ;; or waiting
+    :total nil
     :rows []}))
 
 (def cfmt (f/formatter "yyyy-MM-ddTHH:mm:ss"))
@@ -41,12 +42,14 @@
 (defn process-es-response
   ""
   [rsp]
-  (let [{{{hits :hits} :hits} :body} rsp]
+  (let [{{{t :total hits :hits} :hits} :body} rsp]
+    {:total t
+     :rows
     (for [{{:keys [timestamp pcc message-id] :as source} :_source} hits]
       (merge
        source
        {:id message-id
-        :timestamp (->> timestamp (f/parse cfmt) (f/unparse rfmt))}))))
+        :timestamp (->> timestamp (f/parse cfmt) (f/unparse rfmt))}))}))
 
 (defn run-search
   "Run ES simple query string query and update state."
@@ -54,8 +57,9 @@
   (go
     (let [{q :query} @state
           rsp (a/<! (http/post es-url {:json-params (es-qsq q)}))
-          rows (process-es-response rsp)]
+          {:keys [rows total]} (process-es-response rsp)]
       (swap! state assoc :status :ready)
+      (swap! state assoc :total total)
       (swap! state assoc :rows rows))))
 
 (defn update-query

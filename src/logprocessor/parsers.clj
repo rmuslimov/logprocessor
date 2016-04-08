@@ -1,16 +1,9 @@
 (ns logprocessor.parsers
   (:require [clj-time.format :as f]
+            [clj-time.core :as t]
             [clj-xpath.core :as xp]))
 
-(declare parse-et-rq parse-retrieve-rq)
-
 (def sabre-ts (f/formatters :date-hour-minute-second))
-
-(def
-  ^{:doc "Each SOAP may have extension with returns specific information."}
-  details-mapping
-  {:EndTransactionRQ parse-et-rq
-   :TravelItineraryReadRQ parse-retrieve-rq})
 
 (defn parse-method-name
   "Extract node with internal structure"
@@ -29,20 +22,25 @@
     (format ".//MessageHeader//*[local-name()='%s']/text()" tagname) xmldoc)))
 
 (defn clean-ts
-  "Drop Z if exists in the end."
-  [ts]
-  (if (.endsWith ts "Z")
-    (subs ts 0 (-> ts .length dec)) ts))
+  "This is hack for allowance us using PST timezone in request,
+   and utc in responses."
+  [value]
+  (let [parsed (f/parse value)
+        ts (if (.endsWith value "Z")
+             (t/from-time-zone parsed (t/time-zone-for-id "America/Los_Angeles"))
+             parsed)]
+    (f/unparse (f/formatter "yyyy-MM-dd'T'HH:mm:ss") ts)))
 
 (defn parse-header-info
   "Get header information for sabre files"
   [xmldoc]
-  {:session-id (extract-mh-subtext "ConversationId" xmldoc)
-   :message-id (extract-mh-subtext "MessageId" xmldoc)
-   :refto (extract-mh-subtext "RefToMessageId" xmldoc)
-   :service (extract-mh-subtext "Action" xmldoc)
-   :timestamp (if-let [ts (extract-mh-subtext "Timestamp" xmldoc)] (clean-ts ts))
-   :pcc (extract-mh-subtext "CPAId" xmldoc)})
+  (let [refto (extract-mh-subtext "RefToMessageId" xmldoc)
+        ts (if-let [ts (extract-mh-subtext "Timestamp" xmldoc)] (clean-ts ts))]
+    {:session-id (extract-mh-subtext "ConversationId" xmldoc)
+     :message-id (extract-mh-subtext "MessageId" xmldoc)
+     :service (extract-mh-subtext "Action" xmldoc)
+     :timestamp ts :refto refto
+     :pcc (extract-mh-subtext "CPAId" xmldoc)}))
 
 (defn parse-error-info
   "Parse error tags if they exist."

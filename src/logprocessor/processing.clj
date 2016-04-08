@@ -89,7 +89,7 @@
 ;; (def docs (u/walk-over-file "examples.zip"))
 ;; (def b1 (u/walk-over-file "broken.zip"))
 ;; (def real (u/walk-over-s3 :bcd1 :fokker 2016 2 1))
-;; (process docs msg!)
+;; (process (u/walk-over-file "retrieve.zip") msg!)
 ;; (process b1 msg! :description "broken")
-;; (process (take 1 real) msg!)
+;; (process docs msg!)
 ;; @state

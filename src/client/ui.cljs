@@ -71,4 +71,7 @@
     (if (= (:status @state) :waiting)
       [h-box :size "none" :children
        [[label :label "Waiting for response..."]]]
-      [data-table (:rows @state)])]])
+      [v-box :size "none" :gap "5px"
+       :children
+       [[label :label (str (:total @state) " Records found...")]
+        [data-table (:rows @state)]]])]])

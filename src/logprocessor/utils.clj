@@ -5,6 +5,7 @@
              [core :as t]
              [format :as f]]
             [clj-yaml.core :as yaml]
+            [clj-xpath.core :as xp]
             [clojure.java.io :as io]
             [environ.core :refer [env]]
             [fs.core :as fs]
@@ -34,8 +35,9 @@
 
 (defn process-file
   "Processing xmldoc return map representing it's structure."
-  [xmldoc]
-  (let [subdoc (p/extract-body-node xmldoc)
+  [source]
+  (let [xmldoc (xp/xml->doc source)
+        subdoc (p/extract-body-node xmldoc)
         errors (p/parse-error-info subdoc)
         parse-details (details-mapping (p/parse-method-name xmldoc))
         header (p/parse-header-info xmldoc)
