@@ -1,7 +1,8 @@
 (ns user
-  (:require [reloaded.repl :refer [system init start stop go reset]]
+  (:require [clojure.walk :as walk]
             [figwheel-sidecar.repl-api :as ra]
-            [logprocessor.core :refer [main-system]]))
+            [logprocessor.core :refer [main-system]]
+            reloaded.repl))
 
 (reloaded.repl/set-init! main-system)
 
@@ -26,7 +27,7 @@
 
 (defn start-cljs []
   (ra/start-figwheel!
-    {:figwheel-options {} ;; <-- figwheel server config goes here
+    {:figwheel-options {:css-dirs ["resources/public/css"]}
      :build-ids ["dev"]   ;; <-- a vector of build ids to start autobuilding
      :all-builds          ;; <-- supply your build configs here
      [{:id "dev"

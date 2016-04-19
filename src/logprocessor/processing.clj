@@ -20,6 +20,7 @@
   [uid kw & [body]]
   (ms/put! rp (merge {:uid uid :kw kw} (or body {}))))
 
+
 (defn state-consume
   [{uid :uid kw :kw, :as v}]
   (case kw
@@ -91,5 +92,5 @@
 ;; (def real (u/walk-over-s3 :bcd1 :fokker 2016 2 1))
 ;; (process (u/walk-over-file "retrieve.zip") msg!)
 ;; (process b1 msg! :description "broken")
-;; (process docs msg!)
+;; (process (take 3 docs) msg!)
 ;; @state

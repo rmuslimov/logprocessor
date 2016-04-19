@@ -41,7 +41,9 @@
   (format "%s/%s" (env :es-url) slug))
 
 ;; @(create-index! "titan-2016.02")
-;; @(http/delete (es-url "titan-2016.02"))
+;; @(http/delete (es-url "titan-*"))
+;; (get-existing-indices)
+
 
 (defn get-existing-indices
   []
@@ -100,9 +102,6 @@
   {:index
    {:_id message-id :_type "sabre"
     :_index (->> date (f/unparse (f/formatter "Y.MM")) (format "titan-%s"))}})
-
-;; (require '[clj-time.core :as t])
-;; (f/unparse (f/formatter "Y.MM") (t/date-time 2016 2 2))
 
 (defn iter-es-bulk-documents
   "Generates seq for ES bulk API, param should lazy-seq"

@@ -34,7 +34,7 @@
   :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
   :main ^:skip-aot logprocessor.core
   :target-path "target/%s"
-  :plugins [[lein-cljsbuild "1.1.3"] [lein-environ "1.0.2"] [cider/cider-nrepl "0.12.0-SNAPSHOT"]]
+  :plugins [[lein-cljsbuild "1.1.3"] [lein-environ "1.0.2"]]
   :cljsbuild {:figwheel false
               :build-ids ["prod"]
               :builds
@@ -48,4 +48,5 @@
   :env {:es-url "http://localhost:9200/"
         :eagle-file "~/.eagle"
         :s3bucket "lboeing_xml"
-        :repl-port "7801"})
+        :app-port 7800
+        :nrepl-port 7801})

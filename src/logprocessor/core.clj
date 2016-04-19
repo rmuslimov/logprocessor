@@ -62,12 +62,11 @@
 
 (defn main-system []
   (cmp/system-map
-   :web (new-web-server 7800 (-> app wrap-params))))
+   :web (new-web-server (Integer. (env :app-port)) (-> app wrap-params))))
 
-(defn -main
-  ""
-  []
+(defn -main []
   (cmp/start (main-system))
-  (println "Started.")
-  (nrepl-server/start-server :bind "0.0.0.0" :port 7801 :handler cider-nrepl-handler)
+  (println "Started web-server.")
+  (nrepl-server/start-server
+   :bind "0.0.0.0" :port (env :nrepl-port) :handler cider-nrepl-handler)
   (println "Started repl."))

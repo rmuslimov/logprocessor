@@ -7,7 +7,7 @@
             [manifold.deferred :as d]))
 
 (def psize 100)
-(def cpath (fs/expand-home "~/projects/logs/sabre"))
+(def cpath (fs/expand-home "~/projects/logs/amadeus"))
 
 (defn load-all-xmls
   ""
@@ -24,7 +24,7 @@
         (spit fname source)))
     (count data)))
 
-;; (load-all-xmls :stage :fokker 2016 2 1)
+;; (load-all-xmls :stage :cessna 2016 4 15)
 ;; (def ex-name "stage/fokker/y=2016/m=02/d=03/soap-request-12P0HCtP2fz8Gj13F8wlQd.xml")
 ;; (def v (u/walk-over-s3 :stage :fokker 2016 2 3))
 ;; (partition-all psize v)

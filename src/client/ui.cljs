@@ -49,7 +49,7 @@
      :gap "10px"
      :size "none"
      :children
-     [[label :label "Search over S3 logs for request-response xml ..."]
+     [[label :label "Search over S3 logs for request-response xml..."]
       [line :size "2px" :color "gray"]
       [h-box
        :children
